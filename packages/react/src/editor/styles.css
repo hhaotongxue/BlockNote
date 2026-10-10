@@ -2,6 +2,10 @@
 
 /* Default theme params */
 .bn-root {
+  --bn-table-border-color: #ddd;
+  --bn-table-extend-background: #efefef;
+  --bn-table-extend-hover-background: #e5e5e5;
+  --bn-table-extend-text: #7f7f7f;
   --bn-colors-editor-text: #1e1e1e;
   --bn-colors-editor-background: #ffffff;
   --bn-colors-menu-text: #3f3f3f;
@@ -66,6 +70,10 @@
 }
 
 .bn-root[data-color-scheme="dark"] {
+  --bn-table-border-color: #343434;
+  --bn-table-extend-background: #252525;
+  --bn-table-extend-hover-background: #333;
+  --bn-table-extend-text: #a1a1a1;
   --bn-colors-editor-text: #cfcfcf;
   --bn-colors-editor-background: #1f1f1f;
   --bn-colors-menu-text: #cfcfcf;

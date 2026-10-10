@@ -599,6 +599,9 @@ on touch devices (e.g. the mobile formatting toolbar). */
    spacing keeps the column handle centered after its existing rotation. */
 .bn-mantine .bn-table-handle:has(svg[data-test="tableHandle"]) {
   margin-inline: 3px;
+  /* Column offset is 12px: measure a 24px slot, excluding the two
+     border pixels. Symmetric margins preserve the row vertical center. */
+  margin-block: -1px;
 }
 
 /* The default grip uses one column of three dots. The existing column

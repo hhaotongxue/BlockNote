@@ -30,8 +30,6 @@ export const TableHandlesController = <
   S extends StyleSchema = DefaultStyleSchema,
 >(props: {
   tableCellHandle?: FC<TableCellButtonProps>;
-  /** Place the cell menu inside the top corner or centered on the right border. */
-  tableCellHandlePosition?: "top-end" | "right";
   tableHandle?: FC<TableHandleProps>;
   extendButton?: FC<ExtendButtonProps>;
   /**
@@ -235,12 +233,8 @@ export const TableHandlesController = <
                   state.rowIndex !== undefined &&
                   state.colIndex !== undefined &&
                   (!onlyShownElement || onlyShownElement === "tableCellHandle"),
-                placement: props.tableCellHandlePosition ?? "top-end",
-                middleware: [
-                  props.tableCellHandlePosition === "right"
-                    ? offset(({ rects }) => -rects.floating.width / 2)
-                    : offset({ mainAxis: -15, crossAxis: -1 }),
-                ],
+                placement: "top-end",
+                middleware: [offset({ mainAxis: -15, crossAxis: -1 })],
                 whileElementsMounted,
               },
               focusManagerProps: {
@@ -310,12 +304,7 @@ export const TableHandlesController = <
             },
           }
         : undefined,
-    [
-      onlyShownElement,
-      state,
-      whileElementsMounted,
-      props.tableCellHandlePosition,
-    ],
+    [onlyShownElement, state, whileElementsMounted],
   );
 
   if (!state) {

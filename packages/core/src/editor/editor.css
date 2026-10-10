@@ -149,7 +149,9 @@
   --bn-table-widget-size: 22px;
   /* Size of table handles, divided by 2 since half the element is in the cell. */
   --bn-table-handle-size: calc(18px / 2);
+  overflow-x: auto;
   overflow-y: hidden;
+  min-width: 0;
   padding: var(--bn-table-handle-size) var(--bn-table-widget-size)
     var(--bn-table-widget-size) var(--bn-table-handle-size);
   position: relative;
@@ -158,7 +160,11 @@
 
 /* table related: */
 .bn-editor [data-content-type="table"] table {
-  width: auto !important;
+  /* TableView supplies either an explicit total width (all columns sized)
+     or a minimum total width (unsized columns use EMPTY_CELL_WIDTH).
+     A zero base uses that minimum instead of filling the editor width;
+     inline explicit widths still win. Never override them with !important. */
+  width: 0;
   word-break: break-word;
 }
 .bn-editor [data-content-type="table"] th,

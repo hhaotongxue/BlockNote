@@ -15,10 +15,12 @@
   outline: none;
 }
 .lianshu-blocknote-title::placeholder {
+  font-style: normal;
   color: #ccc;
   opacity: 1;
 }
 .bn-preset-page[data-theme="dark"] .lianshu-blocknote-title::placeholder {
+  font-style: normal;
   color: var(--bn-preset-text-tertiary);
 }
 .lianshu-doc-reference {

@@ -1,0 +1,141 @@
+/* Application command palette; BlockNote owns filtering and keyboard commands. */
+.ls-command-menu {
+  box-sizing: border-box;
+  width: 288px;
+  height: 520px;
+  max-width: calc(100vw - 24px);
+  max-height: inherit;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bn-preset-border) transparent;
+  padding: 18px 16px;
+  background: var(--bn-preset-bg-card, #fff);
+  color: var(--bn-preset-text-primary, #262626);
+  border: 1px solid var(--bn-preset-border, #e5e5e5);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 8%);
+  font-family: var(--bn-preset-font, sans-serif);
+}
+.ls-command-section + .ls-command-section {
+  margin-top: 22px;
+}
+.ls-command-label {
+  margin-bottom: 12px;
+  color: var(--bn-preset-text-tertiary, #919797);
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 400;
+}
+.ls-command-recents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ls-command-option {
+  cursor: pointer;
+  user-select: none;
+  border-radius: 6px;
+}
+.ls-command-option[aria-selected="true"] {
+  background: var(--bn-preset-button-hover, #f2f3f3);
+}
+.ls-command-option:not([aria-selected="true"]):hover {
+  background: color-mix(
+    in srgb,
+    var(--bn-preset-button-hover, #f2f3f3) 55%,
+    transparent
+  );
+}
+.ls-command-chip {
+  padding: 4px 9px;
+  background: var(
+    --bn-preset-button-hover,
+    color-mix(in srgb, currentColor 6%, transparent)
+  );
+  color: var(--bn-preset-text-primary, inherit);
+  font-size: 14px;
+  line-height: 20px;
+}
+.ls-command-section-format {
+  padding-top: 16px;
+  border-top: 1px solid var(--bn-preset-border, #eee);
+}
+.ls-command-section-format:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+.ls-command-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px 2px;
+}
+.ls-command-format {
+  box-sizing: border-box;
+  width: 36px;
+  max-width: 100%;
+  aspect-ratio: 1;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ls-command-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ls-command-icon svg {
+  width: 22px;
+  height: 22px;
+}
+.ls-command-basics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 8px;
+}
+.ls-command-entry {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px;
+  min-width: 0;
+  min-height: 50px;
+}
+.ls-command-entry .ls-command-icon {
+  position: relative;
+  box-sizing: border-box;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--bn-preset-border, #e5e5e5);
+  border-radius: 8px;
+  background: var(--bn-preset-bg-card, #fff);
+}
+.ls-command-copy {
+  min-width: 0;
+  font-size: 14px;
+  line-height: 21px;
+}
+.ls-command-copy > span {
+  display: block;
+}
+.ls-command-copy small {
+  display: block;
+  color: var(--bn-preset-text-tertiary, #919797);
+  font-size: 12px;
+  line-height: 18px;
+}
+.ls-command-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ls-command-empty {
+  padding: 32px 0;
+  color: var(--bn-preset-text-secondary);
+  font-size: 13px;
+  text-align: center;
+}

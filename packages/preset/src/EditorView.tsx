@@ -1,0 +1,44 @@
+import type { ComponentProps } from "react";
+import type {
+  BlockSchema,
+  InlineContentSchema,
+  StyleSchema,
+} from "@blocknote/core";
+import { BlockNoteView } from "@blocknote/mantine";
+import { BlockNoteSideMenu } from "./BlockNoteSideMenu.js";
+import { BlockNoteCommandMenu } from "./BlockNoteCommandMenu.js";
+import { BlockNoteFormattingToolbar } from "./BlockNoteFormattingToolbar.js";
+import { taskCheckFeedback } from "./taskCheckFeedback.js";
+import { useCreationPolicy } from "./useCreationPolicy.js";
+
+/** Shared visual preset. Consumers supply document, persistence and business UI only. */
+export function EditorView<
+  B extends BlockSchema,
+  I extends InlineContentSchema,
+  S extends StyleSchema,
+>({
+  children,
+  onClickCapture,
+  ...props
+}: ComponentProps<typeof BlockNoteView<B, I, S>>) {
+  useCreationPolicy(props.editor);
+  return (
+    <BlockNoteView
+      {...props}
+      sideMenu={false}
+      slashMenu={false}
+      formattingToolbar={false}
+      onClickCapture={(event) => {
+        onClickCapture?.(event);
+        if (!event.defaultPrevented) {
+          taskCheckFeedback(event);
+        }
+      }}
+    >
+      <BlockNoteSideMenu />
+      <BlockNoteCommandMenu />
+      <BlockNoteFormattingToolbar />
+      {children}
+    </BlockNoteView>
+  );
+}

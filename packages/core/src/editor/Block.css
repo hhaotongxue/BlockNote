@@ -286,7 +286,8 @@ NESTED BLOCKS
 /* DIVIDERS */
 [data-content-type="divider"] hr {
   border: none;
-  border-top: 1px solid rgb(125, 121, 122);
+  border-top: 1px solid
+    var(--bn-preset-border, var(--bn-colors-border, #e5e5e5));
   margin: 0.5em 0;
   flex: 1;
 }

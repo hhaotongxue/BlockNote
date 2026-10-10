@@ -1,0 +1,54 @@
+.bn-container,
+.bn-preset-page {
+  --bn-preset-text-primary: var(--color-text-primary, #18181b);
+  --bn-preset-text-secondary: var(--color-text-secondary, #52525b);
+  --bn-preset-text-tertiary: var(--color-text-tertiary, #a1a1aa);
+  --bn-preset-bg-card: var(--color-bg-card, #fff);
+  --bn-preset-bg-secondary: var(--color-bg-secondary, #f4f4f5);
+  --bn-preset-border: var(--color-border, #eee);
+  --bn-preset-button-hover: var(--color-button-hover, rgb(0 0 0 / 5%));
+  --bn-preset-error: var(--color-error, #ef4444);
+}
+.bn-container[data-color-scheme="dark"],
+.bn-preset-page[data-theme="dark"] {
+  --bn-preset-text-primary: var(--color-text-primary, #f5f5f7);
+  --bn-preset-text-secondary: var(--color-text-secondary, #a1a1aa);
+  --bn-preset-text-tertiary: var(--color-text-tertiary, #71717a);
+  --bn-preset-bg-card: var(--color-bg-card, #141414);
+  --bn-preset-bg-secondary: var(--color-bg-secondary, #252528);
+  --bn-preset-border: var(--color-border, #2c2c2e);
+  --bn-preset-button-hover: var(--color-button-hover, rgb(255 255 255 / 8%));
+  --bn-preset-error: var(--color-error, #ef4444);
+}
+.bn-container,
+.bn-preset-page {
+  --bn-preset-font: var(
+    --font-family-body,
+    -apple-system,
+    BlinkMacSystemFont,
+    "PingFang SC",
+    "Microsoft YaHei",
+    "Helvetica Neue",
+    Arial,
+    sans-serif
+  );
+}
+.bn-preset-page {
+  --bn-page-color-text-primary: var(--color-text-primary, #18181b);
+  --bn-page-color-text-secondary: var(--color-text-secondary, #52525b);
+  --bn-page-color-text-tertiary: var(--color-text-tertiary, #a1a1aa);
+  --bn-page-color-bg-card: var(--color-bg-card, #fff);
+  --bn-page-color-border: var(--color-border, #eee);
+  --bn-page-color-button-hover: var(--color-button-hover, rgb(0 0 0 / 5%));
+}
+.bn-preset-page[data-theme="dark"] {
+  --bn-page-color-text-primary: var(--color-text-primary, #f5f5f7);
+  --bn-page-color-text-secondary: var(--color-text-secondary, #a1a1aa);
+  --bn-page-color-text-tertiary: var(--color-text-tertiary, #71717a);
+  --bn-page-color-bg-card: var(--color-bg-card, #141414);
+  --bn-page-color-border: var(--color-border, #2c2c2e);
+  --bn-page-color-button-hover: var(
+    --color-button-hover,
+    rgb(255 255 255 / 8%)
+  );
+}

@@ -44,4 +44,4 @@ When writing a new feature, bug fix, or other modification, it may not be immedi
 
 # Lianshu fork scope
 
-Read `docs/lianshu/style-policy.md` before making changes for lianshu. This fork customization is CSS-only: do not modify runtime TypeScript/JavaScript, editor behavior, schemas, commands, selection, drag-and-drop, undo, serialization or collaboration. Keep infrastructure changes separate from visual changes.
+Read `docs/lianshu/style-policy.md` before making changes for lianshu. Core customization is CSS-only. The user-authorized `packages/preset` owns reusable UI components, styles, animations and creation policy through public BlockNote APIs. Consumer applications must not add editor style adaptations. Outside that preset: do not modify runtime TypeScript/JavaScript, editor behavior, schemas, commands, selection, drag-and-drop, undo, serialization or collaboration. Keep infrastructure changes separate from visual changes.

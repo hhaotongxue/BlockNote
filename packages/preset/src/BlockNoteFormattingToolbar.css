@@ -1,0 +1,92 @@
+/* Presentation only: upstream buttons retain state, commands and tooltips. */
+.bn-mantine .bn-toolbar.ls-formatting-toolbar {
+  padding: 6px;
+  gap: 3px;
+  border: 1px solid var(--bn-preset-border, var(--bn-colors-border));
+  border-radius: 10px;
+  background: var(--bn-preset-bg-card, var(--bn-colors-menu-background));
+  color: var(--bn-preset-text-primary, var(--bn-colors-menu-text));
+  box-shadow: 0 6px 24px rgb(0 0 0 / 12%);
+}
+.ls-formatting-toolbar .mantine-Button-root,
+.ls-formatting-toolbar .mantine-ActionIcon-root {
+  height: 32px;
+  min-width: 32px;
+  border-radius: 6px;
+  color: inherit;
+}
+.ls-formatting-toolbar .mantine-Button-root {
+  padding-inline: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.ls-formatting-toolbar .mantine-ActionIcon-root {
+  width: 32px;
+  padding: 6px;
+}
+.ls-formatting-toolbar [data-test="alignTextLeft"],
+.ls-formatting-toolbar [data-test="colors"],
+.ls-formatting-toolbar [data-test="createLink"] {
+  margin-inline-start: 5px;
+}
+.ls-formatting-toolbar svg {
+  flex-shrink: 0;
+}
+
+.ls-toolbar-color {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+}
+
+/* The block-type dropdown is portaled, so scope by its own class. */
+.bn-mantine .bn-select.ls-block-type-menu {
+  box-sizing: border-box;
+  width: 210px;
+  height: 320px;
+  max-width: calc(100vw - 24px);
+  max-height: min(320px, calc(100dvh - 24px));
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bn-preset-border) transparent;
+  padding: 6px;
+  background: var(--bn-preset-bg-card, var(--bn-colors-menu-background));
+  color: var(--bn-preset-text-primary, var(--bn-colors-menu-text));
+  border: 1px solid var(--bn-preset-border, var(--bn-colors-border));
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 10%);
+}
+.bn-mantine .ls-block-type-menu .mantine-Menu-item {
+  box-sizing: border-box;
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 400;
+  color: inherit;
+}
+.bn-mantine
+  .ls-block-type-menu
+  .mantine-Menu-itemSection[data-position="left"] {
+  width: 24px;
+  height: 24px;
+  justify-content: center;
+  margin-inline-end: 8px;
+}
+.bn-mantine .ls-block-type-menu .mantine-Menu-item:hover,
+.bn-mantine .ls-block-type-menu .mantine-Menu-item[data-hovered],
+.bn-mantine .ls-block-type-menu .mantine-Menu-item:has(.bn-tick-icon) {
+  background: var(
+    --bn-preset-button-hover,
+    var(--bn-colors-hovered-background)
+  );
+}
+.bn-mantine .ls-block-type-menu .bn-tick-icon {
+  color: var(--bn-preset-text-secondary);
+  width: 12px;
+  height: 12px;
+}

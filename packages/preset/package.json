@@ -1,0 +1,43 @@
+{
+  "name": "@blocknote/preset",
+  "version": "0.55.0-lianshu.1",
+  "type": "module",
+  "license": "MPL-2.0",
+  "description": "Shared BlockNote editor UI, theme and creation policy",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.less"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./style.css": "./src/style.css",
+    "./page.module.less": "./src/page.module.less"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "lint": "vp lint src"
+  },
+  "dependencies": {
+    "@blocknote/core": "workspace:^",
+    "@blocknote/react": "workspace:^",
+    "@blocknote/mantine": "workspace:^",
+    "lucide-react": "^1.17.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0 || ^19.0",
+    "react-dom": "^18.0 || ^19.0",
+    "@mantine/core": "^8.3.11 || ^9.0.2",
+    "less": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3"
+  }
+}

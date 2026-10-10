@@ -1,0 +1,45 @@
+/* Page chrome only. Editor typography lives in the BlockNote fork CSS. */
+.lianshu-blocknote-title {
+  display: block;
+  box-sizing: border-box;
+  width: var(--affine-editor-width, 100%);
+  border: 0;
+  background: transparent;
+  color: var(--bn-preset-text-primary);
+  font: 700 42px/1.25 var(--bn-preset-font, sans-serif);
+  letter-spacing: -0.5px;
+  padding: 0 var(--affine-editor-side-padding, 24px);
+  margin: 0 auto 28px;
+}
+.lianshu-blocknote-title:focus-visible {
+  outline: none;
+}
+.lianshu-blocknote-title::placeholder {
+  color: #ccc;
+  opacity: 1;
+}
+.bn-preset-page[data-theme="dark"] .lianshu-blocknote-title::placeholder {
+  color: var(--bn-preset-text-tertiary);
+}
+.lianshu-doc-reference {
+  border: 0;
+  border-radius: 4px;
+  background: var(--bn-preset-bg-secondary);
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0 4px;
+}
+.lianshu-legacy-block {
+  padding: 12px;
+  border: 1px solid var(--bn-preset-border);
+  border-radius: 6px;
+}
+.lianshu-legacy-block small {
+  display: block;
+  color: var(--bn-preset-text-secondary);
+}
+.lianshu-editor-error {
+  color: var(--bn-preset-error, #b42318);
+  padding: 12px;
+}

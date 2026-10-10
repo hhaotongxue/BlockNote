@@ -1,0 +1,6 @@
+@import "@blocknote/core/fonts/inter.css";
+@import "@blocknote/mantine/style.css";
+@import "./theme.css";
+@import "./BlockNoteBody.css";
+@import "./BlockNoteCommandMenu.css";
+@import "./BlockNoteFormattingToolbar.css";

@@ -2,7 +2,7 @@
 
 /* Default theme params */
 .bn-root {
-  --bn-colors-editor-text: #3f3f3f;
+  --bn-colors-editor-text: #1e1e1e;
   --bn-colors-editor-background: #ffffff;
   --bn-colors-menu-text: #3f3f3f;
   --bn-colors-menu-background: #ffffff;
@@ -38,10 +38,22 @@
   --bn-colors-highlights-pink-text: #ad1a72;
   --bn-colors-highlights-pink-background: #f4dfeb;
 
-  --bn-font-family:
-    "Inter", "Inter fallback", "SF Pro Display", -apple-system,
-    BlinkMacSystemFont, "Open Sans", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  --bn-font-family: var(
+    --affine-font-family,
+    var(
+      --font-family-body,
+      -apple-system,
+      BlinkMacSystemFont,
+      "PingFang SC",
+      "Microsoft YaHei",
+      "Helvetica Neue",
+      Arial,
+      sans-serif
+    )
+  );
+  --bn-color-list-marker: #1c81d9;
+  --bn-color-link: #1e96eb;
+  --bn-body-line-height: 1.625;
   --bn-border-radius: 6px;
 
   /* Derived values */
@@ -102,6 +114,15 @@
   background-color: var(--bn-colors-editor-background);
   border-radius: var(--bn-border-radius-large);
   color: var(--bn-colors-editor-text);
+}
+
+/* Links retain inline formatting; only real anchors receive link styling. */
+.bn-editor .bn-inline-content a {
+  color: var(--bn-color-link);
+  text-decoration: none;
+}
+.bn-editor .bn-inline-content a:hover {
+  text-decoration: underline;
 }
 
 /* Custom block node view wrapper styling */

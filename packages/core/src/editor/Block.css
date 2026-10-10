@@ -3,8 +3,50 @@ BASIC STYLES
 */
 
 .bn-block-outer {
-  line-height: 1.5;
+  line-height: var(--bn-body-line-height, 1.625);
   transition: margin 0.2s;
+}
+
+/* lianshu prose rhythm; direct children only, never match nested headings. */
+.bn-block-outer:has(
+  > .bn-block
+    > .bn-block-content:is(
+      [data-content-type="paragraph"],
+      [data-content-type="bulletListItem"],
+      [data-content-type="numberedListItem"],
+      [data-content-type="checkListItem"]
+    )
+) {
+  margin-block: 10px;
+}
+
+/* Match AFFiNE's collapsing block margins, without also adding content padding. */
+.bn-block-content:is(
+  [data-content-type="paragraph"],
+  [data-content-type="bulletListItem"],
+  [data-content-type="numberedListItem"],
+  [data-content-type="checkListItem"]
+) {
+  padding-block: 0;
+}
+.bn-block-outer:has(> .bn-block > [data-content-type="heading"]) {
+  margin-block: 18px 10px;
+}
+.bn-block-outer:has(
+  > .bn-block > [data-content-type="heading"][data-level="2"]
+) {
+  margin-top: 14px;
+}
+.bn-block-outer:has(
+  > .bn-block
+    > [data-content-type="heading"]:is(
+      [data-level="3"],
+      [data-level="4"],
+      [data-level="5"],
+      [data-level="6"]
+    )
+) {
+  margin-top: 12px;
 }
 
 /*Ensures blocks & block content spans editor width*/
@@ -156,47 +198,64 @@ NESTED BLOCKS
 
 /* HEADINGS*/
 [data-content-type="heading"] {
-  padding-top: 18px;
-  --level: 3em;
+  font-family: var(--bn-font-family);
+  padding-block: 0;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  --heading-weight: 750;
+  --level: 32px;
 }
 [data-content-type="heading"][data-level="2"] {
-  --level: 2em;
+  --heading-weight: 600;
+  line-height: calc(1em + 10px);
+  --level: 26px;
 }
 [data-content-type="heading"][data-level="3"] {
-  --level: 1.3em;
+  line-height: calc(1em + 8px);
+  --heading-weight: 600;
+  --level: 24px;
 }
 [data-content-type="heading"][data-level="4"] {
-  --level: 1em;
+  line-height: calc(1em + 8px);
+  letter-spacing: -0.015em;
+  --heading-weight: 600;
+  --level: 22px;
 }
 [data-content-type="heading"][data-level="5"] {
-  --level: 0.9em;
+  line-height: calc(1em + 8px);
+  letter-spacing: -0.015em;
+  --heading-weight: 600;
+  --level: 20px;
 }
 [data-content-type="heading"][data-level="6"] {
-  --level: 0.8em;
+  line-height: calc(1em + 8px);
+  letter-spacing: -0.015em;
+  --heading-weight: 600;
+  --level: 18px;
 }
 
 [data-prev-level="1"] {
-  --prev-level: 3em;
+  --prev-level: 32px;
 }
 [data-prev-level="2"] {
-  --prev-level: 2em;
+  --prev-level: 26px;
 }
 [data-prev-level="3"] {
-  --prev-level: 1.3em;
+  --prev-level: 24px;
 }
 [data-prev-level="4"] {
-  --prev-level: 1em;
+  --prev-level: 22px;
 }
 [data-prev-level="5"] {
-  --prev-level: 0.9em;
+  --prev-level: 20px;
 }
 [data-prev-level="6"] {
-  --prev-level: 0.8em;
+  --prev-level: 18px;
 }
 
 .bn-block-outer[data-prev-type="heading"] > .bn-block > .bn-block-content {
   font-size: var(--prev-level);
-  font-weight: bold;
+  font-weight: var(--heading-weight, 600);
 }
 
 .bn-block-outer:not([data-prev-type])
@@ -213,7 +272,7 @@ NESTED BLOCKS
   > .bn-suggestion-node
   > .bn-block-content[data-content-type="heading"] {
   font-size: var(--level);
-  font-weight: bold;
+  font-weight: var(--heading-weight, 600);
 }
 
 /* QUOTES */
@@ -241,10 +300,14 @@ NESTED BLOCKS
 
 /* Ordered */
 .bn-block-content[data-content-type="numberedListItem"]::before {
+  color: var(--bn-color-list-marker, #1c81d9);
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  padding-left: 2px;
   min-width: 24px;
-  padding-right: 4px;
+  padding-right: 0;
+  flex-shrink: 0;
 }
 
 [data-content-type="numberedListItem"] {
@@ -278,10 +341,12 @@ NESTED BLOCKS
 
 /* Unordered */
 .bn-block-content[data-content-type="bulletListItem"]::before {
+  color: var(--bn-color-list-marker, #1c81d9);
   display: flex;
   justify-content: center;
   min-width: 24px;
-  padding-right: 4px;
+  padding-right: 0;
+  flex-shrink: 0;
 }
 
 /* Checked */
@@ -373,7 +438,7 @@ NESTED BLOCKS
 .bn-block-outer[data-prev-type="bulletListItem"]
   > .bn-block
   > .bn-block-content::before {
-  content: "•";
+  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Ccircle%20cx%3D%227%22%20cy%3D%2212%22%20r%3D%223%22%20fill%3D%22%231c81d9%22%2F%3E%3C%2Fsvg%3E");
 }
 
 .bn-block-outer:not([data-prev-type])
@@ -388,7 +453,7 @@ NESTED BLOCKS
   > :is(ins, del)
   > .bn-suggestion-node
   .bn-block-content[data-content-type="bulletListItem"]::before {
-  content: "•";
+  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Ccircle%20cx%3D%227%22%20cy%3D%2212%22%20r%3D%223%22%20fill%3D%22%231c81d9%22%2F%3E%3C%2Fsvg%3E");
 }
 
 /* 1 level of list nesting */
@@ -397,7 +462,7 @@ NESTED BLOCKS
   > .bn-block-outer[data-prev-type="bulletListItem"]
   > .bn-block
   > .bn-block-content::before {
-  content: "◦";
+  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Ccircle%20cx%3D%227%22%20cy%3D%2212%22%20r%3D%222.625%22%20fill%3D%22none%22%20stroke%3D%22%231c81d9%22%20stroke-width%3D%22.75%22%2F%3E%3C%2Fsvg%3E");
 }
 
 [data-content-type="bulletListItem"]
@@ -411,7 +476,7 @@ NESTED BLOCKS
   > .bn-block
   > div[data-type="modification"]
   > .bn-block-content[data-content-type="bulletListItem"]::before {
-  content: "◦";
+  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Ccircle%20cx%3D%227%22%20cy%3D%2212%22%20r%3D%222.625%22%20fill%3D%22none%22%20stroke%3D%22%231c81d9%22%20stroke-width%3D%22.75%22%2F%3E%3C%2Fsvg%3E");
 }
 
 /* 2 levels of list nesting */
@@ -422,7 +487,7 @@ NESTED BLOCKS
   > .bn-block-outer[data-prev-type="bulletListItem"]
   > .bn-block
   > .bn-block-content::before {
-  content: "▪\FE0E";
+  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M7%209%2010%2012%207%2015%204%2012Z%22%20fill%3D%22%231c81d9%22%2F%3E%3C%2Fsvg%3E");
 }
 
 [data-content-type="bulletListItem"]
@@ -440,7 +505,7 @@ NESTED BLOCKS
   > .bn-block
   > div[data-type="modification"]
   > .bn-block-content[data-content-type="bulletListItem"]::before {
-  content: "▪\FE0E";
+  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M7%209%2010%2012%207%2015%204%2012Z%22%20fill%3D%22%231c81d9%22%2F%3E%3C%2Fsvg%3E");
 }
 
 /* CODE BLOCKS */

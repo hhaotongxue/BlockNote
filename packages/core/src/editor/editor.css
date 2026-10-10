@@ -2,7 +2,7 @@
 
 .bn-editor {
   outline: none;
-  padding-inline: 54px;
+  padding-inline: var(--bn-editor-side-padding, 54px);
   font-synthesis: style weight;
 
   /* Define a set of colors to be used throughout the app for consistency
@@ -36,25 +36,34 @@
   min-width: 2px !important;
 }
 
+/* Native heading tags must inherit the block's typography. Without this,
+   the browser's h1-h6 bold rule wins over an inherited 600 weight. Keep
+   explicitly formatted inline content (e.g. strong) independent. */
+.bn-default-styles :is(h1, h2, h3, h4, h5, h6) {
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+}
+
+/* AFFiNE's inline bold is an absolute 700, not UA bolder (900 on a 600 heading). */
+.bn-default-styles .bn-inline-content :is(strong, b) {
+  font-weight: 700;
+}
+
 .bn-default-styles {
   font-size: 16px;
   font-weight: normal;
-  font-family:
-    "Inter",
-    "Inter fallback",
-    "SF Pro Display",
+  font-family: var(
+    --bn-font-family,
     -apple-system,
     BlinkMacSystemFont,
-    "Open Sans",
-    "Segoe UI",
-    "Roboto",
-    "Oxygen",
-    "Ubuntu",
-    "Cantarell",
-    "Fira Sans",
-    "Droid Sans",
+    "PingFang SC",
+    "Microsoft YaHei",
     "Helvetica Neue",
-    sans-serif;
+    Arial,
+    sans-serif
+  );
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -5,6 +5,7 @@ import type {
   StyleSchema,
 } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
+import { BlockNoteTableHandles } from "./BlockNoteTableHandles.js";
 import { BlockNoteSideMenu } from "./BlockNoteSideMenu.js";
 import { BlockNoteCommandMenu } from "./BlockNoteCommandMenu.js";
 import { BlockNoteFormattingToolbar } from "./BlockNoteFormattingToolbar.js";
@@ -28,6 +29,7 @@ export function EditorView<
       sideMenu={false}
       slashMenu={false}
       formattingToolbar={false}
+      tableHandles={false}
       onClickCapture={(event) => {
         onClickCapture?.(event);
         if (!event.defaultPrevented) {
@@ -38,6 +40,7 @@ export function EditorView<
       <BlockNoteSideMenu />
       <BlockNoteCommandMenu />
       <BlockNoteFormattingToolbar />
+      {props.tableHandles !== false && <BlockNoteTableHandles />}
       {children}
     </BlockNoteView>
   );

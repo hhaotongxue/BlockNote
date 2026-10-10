@@ -386,23 +386,46 @@ NESTED BLOCKS
   background-color: var(--bn-color-list-marker, #1c81d9);
 }
 
-/* Checked */
+/* Checked: AFFiNE's 20px checkbox icons in the original 24px prefix. */
 .bn-block-content[data-content-type="checkListItem"] > div:has(> input) {
-  height: 24px;
+  display: flex;
+  align-items: center;
+  width: 24px;
+  height: 26px;
+  flex-shrink: 0;
 }
 
 .bn-block-content[data-content-type="checkListItem"] > div > input {
+  appearance: none;
+  -webkit-appearance: none;
   cursor: pointer;
-  height: 24px;
-  margin-left: 4px;
-  margin-right: 8px;
-  margin-block: 0;
-  width: 12px;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: transparent
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%238e8d91%22%20fill-rule%3D%22evenodd%22%20d%3D%22M6%203.25A2.75%202.75%200%200%200%203.25%206v12A2.75%202.75%200%200%200%206%2020.75h12A2.75%202.75%200%200%200%2020.75%2018V6A2.75%202.75%200%200%200%2018%203.25zM4.75%206c0-.69.56-1.25%201.25-1.25h12c.69%200%201.25.56%201.25%201.25v12c0%20.69-.56%201.25-1.25%201.25H6c-.69%200-1.25-.56-1.25-1.25z%22%2F%3E%3C%2Fsvg%3E")
+    center / 20px 20px no-repeat;
 }
-
+.bn-block-content[data-content-type="checkListItem"] > div > input:checked {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%231e96eb%22%20fill-rule%3D%22evenodd%22%20d%3D%22M3.25%206A2.75%202.75%200%200%201%206%203.25h12A2.75%202.75%200%200%201%2020.75%206v12A2.75%202.75%200%200%201%2018%2020.75H6A2.75%202.75%200%200%201%203.25%2018zm13.28%203.53a.75.75%200%200%200-1.06-1.06l-4.97%204.97-1.47-1.47a.75.75%200%200%200-1.06%201.06l2%202a.75.75%200%200%200%201.06%200z%22%2F%3E%3C%2Fsvg%3E");
+}
+.bn-block-content[data-content-type="checkListItem"]
+  > div
+  > input:focus-visible {
+  outline: 2px solid #1e96eb;
+  outline-offset: 2px;
+}
+.bn-block-content[data-content-type="checkListItem"] > div > input:disabled {
+  cursor: default;
+}
 .bn-block-content[data-content-type="checkListItem"][data-checked="true"]
   .bn-inline-content {
-  text-decoration: line-through;
+  color: var(--affine-text-secondary-color, #a1a1aa);
+  text-decoration: none;
 }
 
 .bn-block-content[data-text-alignment="center"] {

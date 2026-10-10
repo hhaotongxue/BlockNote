@@ -163,7 +163,7 @@
 }
 .bn-editor [data-content-type="table"] th,
 .bn-editor [data-content-type="table"] td {
-  border: 1px solid var(--bn-table-border-color, #ddd);
+  border: 1px solid #ddd;
   padding: 5px 10px;
 }
 

@@ -630,10 +630,21 @@ on touch devices (e.g. the mobile formatting toolbar). */
 
 .bn-mantine .bn-table-handle:hover,
 .bn-mantine .bn-table-handle-dragging,
-.bn-mantine .bn-extend-button:hover,
-.bn-mantine .bn-extend-button-editing,
 .bn-mantine .bn-table-cell-handle:hover {
   background-color: var(--bn-colors-hovered-background);
+}
+
+/* Extension rails must remain visible against the document in both themes. */
+.bn-mantine .bn-extend-button {
+  background-color: var(--bn-table-extend-background, #efefef);
+  border-color: var(--bn-table-extend-background, #efefef);
+  color: var(--bn-table-extend-text, #7f7f7f);
+}
+
+.bn-mantine .bn-extend-button:hover,
+.bn-mantine .bn-extend-button-editing {
+  background-color: var(--bn-table-extend-hover-background, #e5e5e5);
+  border-color: var(--bn-table-extend-hover-background, #e5e5e5);
 }
 
 .bn-mantine .bn-extend-button-add-remove-columns {

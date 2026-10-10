@@ -359,7 +359,7 @@ NESTED BLOCKS
   position: absolute;
   pointer-events: none;
   left: 4px;
-  top: 9px;
+  top: calc(0.5lh - 3px);
   width: 6px;
   height: 6px;
   box-sizing: border-box;

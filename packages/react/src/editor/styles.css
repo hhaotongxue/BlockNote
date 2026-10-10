@@ -111,7 +111,8 @@
 
 /* Editor styling */
 .bn-editor {
-  background-color: var(--bn-colors-editor-background);
+  /* Let the document surface show through in both light and dark themes. */
+  background-color: transparent;
   border-radius: var(--bn-border-radius-large);
   color: var(--bn-colors-editor-text);
 }

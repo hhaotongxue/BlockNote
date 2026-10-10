@@ -594,8 +594,26 @@ on touch devices (e.g. the mobile formatting toolbar). */
   padding: 0 4px;
 }
 
-.bn-mantine .bn-table-handle svg {
-  margin-inline: -4px;
+/* Row positioning overlaps the table by 10px: retain a 20px layout slot
+   around the 14px visible grip (12px icon + two 1px borders). Symmetric
+   spacing keeps the column handle centered after its existing rotation. */
+.bn-mantine .bn-table-handle:has(svg[data-test="tableHandle"]) {
+  margin-inline: 3px;
+}
+
+/* The default grip uses one column of three dots. The existing column
+   handle rotation also turns this into a horizontal three-dot grip. */
+.bn-mantine .bn-table-handle svg[data-test="tableHandle"] {
+  width: 12px;
+  height: 24px;
+  margin-inline: 0;
+  background:
+    radial-gradient(circle at 50% 6px, currentColor 2px, transparent 2px),
+    radial-gradient(circle at 50% 12px, currentColor 2px, transparent 2px),
+    radial-gradient(circle at 50% 18px, currentColor 2px, transparent 2px);
+}
+.bn-mantine .bn-table-handle svg[data-test="tableHandle"] > path {
+  visibility: hidden;
 }
 
 .bn-mantine .bn-table-handle-not-draggable {

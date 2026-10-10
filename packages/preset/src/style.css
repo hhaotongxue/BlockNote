@@ -4,3 +4,14 @@
 @import "./BlockNoteBody.css";
 @import "./BlockNoteCommandMenu.css";
 @import "./BlockNoteFormattingToolbar.css";
+
+.bn-preset-bookmark {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--bn-colors-border);
+  border-radius: 8px;
+}
+.bn-preset-bookmark p {
+  margin: 6px 0;
+  color: var(--bn-colors-menu-text);
+}

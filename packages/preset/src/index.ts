@@ -5,3 +5,7 @@ export { BlockNoteSideMenu } from "./BlockNoteSideMenu.js";
 export { useCreationPolicy } from "./useCreationPolicy.js";
 
 export { EditorTooltip } from "@blocknote/mantine";
+export {
+  createDocumentSchema,
+  type DocumentReferenceOptions,
+} from "./DocumentSchema.js";

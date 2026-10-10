@@ -1,8 +1,5 @@
-import {
-  Chip as MantineChip,
-  Group as MantineGroup,
-  Tooltip as MantineTooltip,
-} from "@mantine/core";
+import { EditorTooltip as MantineTooltip } from "../tooltip/EditorTooltip.js";
+import { Chip as MantineChip, Group as MantineGroup } from "@mantine/core";
 
 import { assertEmpty } from "@blocknote/core";
 import { ComponentProps } from "@blocknote/react";

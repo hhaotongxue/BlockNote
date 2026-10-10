@@ -11,3 +11,7 @@
 - 检查构建和策略测试；视觉由用户本地验收，未经允许不打开浏览器。
 
 见 `packages/preset/README.md` 获取接入方式。
+
+## 统一提示组件
+
+按用户要求，允许 `packages/mantine/src/tooltip/EditorTooltip.tsx` 和工具栏、Badge 的提示接入进行 UI 组件调整。所有提示外观由 `blocknoteStyles.css` 的统一外层规则维护；preset 导出 `EditorTooltip` 供消费页面引用，不在消费方实现提示样式。此例外不涉及编辑引擎逻辑。

@@ -1,9 +1,9 @@
+import { EditorTooltip as MantineTooltip } from "../tooltip/EditorTooltip.js";
 import {
   ActionIcon as MantineActionIcon,
   Button as MantineButton,
   Stack as MantineStack,
   Text as MantineText,
-  Tooltip as MantineTooltip,
 } from "@mantine/core";
 
 import { assertEmpty } from "@blocknote/core";

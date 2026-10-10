@@ -25,3 +25,7 @@ corepack pnpm@11.8.0 exec vp run --filter @blocknote/core --filter @blocknote/re
 ```
 
 基础包构建生成声明文件。消费项目的 TypeScript 和 Vite 都应解析同一个 fork，不能分别使用 npm 类型与 fork 运行时。源码包本身不需要额外编译；由消费项目打包。此变更未发布 registry。
+
+## 统一提示
+
+菜单、工具栏和页面图标统一使用导出的 `EditorTooltip`。传 `label` 与一个可接收 ref 的子元素；页面外使用时可传 `colorScheme="light"` / `"dark"`。编辑器浮层内可通过 `portalProps.target` 指向 `usePortalElement()` 返回的主题容器。不要直接使用 Mantine Tooltip、原生 title 或 CSS 伪元素另画一层提示。背景、字体、留白统一由 Mantine 皮肤的 tooltip 规则维护。

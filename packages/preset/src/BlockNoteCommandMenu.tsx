@@ -3,6 +3,7 @@ import {
   getDefaultReactSlashMenuItems,
   SuggestionMenuController,
   useBlockNoteEditor,
+  usePortalElement,
 } from "@blocknote/react";
 import type {
   DefaultReactSuggestionItem,
@@ -33,7 +34,7 @@ import {
   SquarePlus,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { Tooltip } from "@mantine/core";
+import { EditorTooltip } from "@blocknote/mantine";
 
 type Command = DefaultReactSuggestionItem & {
   commandKey: string;
@@ -118,6 +119,7 @@ function CommandPalette({
   loadingState,
 }: SuggestionMenuProps<Command>) {
   const root = useRef<HTMLDivElement>(null);
+  const tooltipPortal = usePortalElement();
   useEffect(() => {
     const selected = root.current?.querySelector<HTMLElement>(
       '[aria-selected="true"]',
@@ -166,12 +168,11 @@ function CommandPalette({
           >
             {items.map((item, index) =>
               item.section !== section ? null : (
-                <Tooltip
+                <EditorTooltip
                   key={`${section}:${item.commandKey}`}
                   label={`${item.title}${item.badge ? ` · ${item.badge}` : ""}`}
                   disabled={section !== "排版"}
-                  withArrow
-                  withinPortal
+                  portalProps={{ target: tooltipPortal || undefined }}
                 >
                   <div
                     key={`${section}:${item.commandKey}`}
@@ -197,7 +198,7 @@ function CommandPalette({
                       </span>
                     )}
                   </div>
-                </Tooltip>
+                </EditorTooltip>
               ),
             )}
           </div>

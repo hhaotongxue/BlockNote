@@ -2276,26 +2276,3 @@
 .propertyMenuAnchor {
   position: relative;
 }
-
-.pageIconBtn[data-tooltip-custom]::after {
-  content: attr(data-tooltip-custom);
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 6px 10px;
-  border-radius: 6px;
-  background: var(--bn-preset-text-primary, #18181b);
-  color: var(--bn-preset-bg-card, #fff);
-  font-size: 12px;
-  line-height: 18px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-}
-.pageIconBtn[data-tooltip-custom]:hover::after,
-.pageIconBtn[data-tooltip-custom]:focus-visible::after {
-  opacity: 1;
-  visibility: visible;
-}

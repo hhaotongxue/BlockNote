@@ -131,13 +131,35 @@
   height: 52px;
 }
 
-/* Mantine Tooltip component base styles */
-.bn-mantine .mantine-Tooltip-tooltip {
-  background-color: transparent;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  padding: 0;
+/* All editor tooltips paint their surface here, including plain text labels. */
+.bn-mantine .mantine-Tooltip-tooltip,
+.bn-editor-tooltip {
+  box-sizing: border-box;
+  background-color: var(--bn-colors-tooltip-background, #efefef);
+  color: var(--bn-colors-tooltip-text, #3f3f3f);
+  border: 1px solid var(--bn-colors-border, #e5e5e5);
+  border-radius: 6px;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 10%);
+  padding: 6px 10px;
+  font-family: var(
+    --bn-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    "PingFang SC",
+    sans-serif
+  );
+  font-size: 12px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 18px;
+  max-width: min(320px, calc(100vw - 24px));
+  overflow-wrap: anywhere;
+  pointer-events: none;
+}
+.bn-editor-tooltip[data-color-scheme="dark"] {
+  background-color: var(--bn-colors-tooltip-background, #262626);
+  color: var(--bn-colors-tooltip-text, #f5f5f7);
+  border-color: var(--bn-colors-border, #3f3f46);
 }
 
 .bn-mantine .mantine-Tooltip-tooltip p:last-child {
@@ -631,15 +653,19 @@ on touch devices (e.g. the mobile formatting toolbar). */
   overflow: visible;
 }
 
-/* Tooltip styling */
+/* TooltipContent only arranges text; the shared outer surface owns styling. */
 .bn-mantine .bn-tooltip {
-  background-color: var(--bn-colors-tooltip-background);
-  border: var(--bn-border);
-  border-radius: var(--bn-border-radius-medium);
-  box-shadow: var(--bn-shadow-medium);
-  color: var(--bn-colors-tooltip-text);
-  padding: 4px 10px;
+  gap: 2px;
+  color: inherit;
   text-align: center;
+}
+.bn-mantine .bn-tooltip p {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+.bn-mantine .bn-tooltip p + p {
+  opacity: 0.7;
 }
 
 /* Additional menu styles */

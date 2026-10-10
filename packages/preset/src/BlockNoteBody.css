@@ -33,13 +33,11 @@
   padding: 0 4px;
 }
 .bn-doc-reference-icon {
+  color: var(--bn-color-list-marker, #1c81d9);
   display: inline-block;
   width: 1em;
   height: 1em;
   vertical-align: -0.125em;
-}
-.bn-doc-reference-arrow {
-  stroke: var(--bn-color-list-marker, #1c81d9);
 }
 .lianshu-legacy-block {
   padding: 12px;

@@ -349,6 +349,43 @@ NESTED BLOCKS
   flex-shrink: 0;
 }
 
+/* Draw geometry separately from the zero-height cursor workaround above.
+   AFFiNE's 24px marker has its circle centered at (7,12), radius 3. */
+.bn-block-content[data-content-type="bulletListItem"] {
+  position: relative;
+}
+.bn-block-content[data-content-type="bulletListItem"]::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  left: 4px;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  box-sizing: border-box;
+  border: 0.75px solid var(--bn-color-list-marker, #1c81d9);
+  border-radius: 50%;
+  background-color: var(--bn-color-list-marker, #1c81d9);
+}
+[data-content-type="bulletListItem"]
+  ~ .bn-block-group
+  > .bn-block-outer
+  > .bn-block
+  > [data-content-type="bulletListItem"]::after {
+  background-color: transparent;
+}
+[data-content-type="bulletListItem"]
+  ~ .bn-block-group
+  [data-content-type="bulletListItem"]
+  ~ .bn-block-group
+  > .bn-block-outer
+  > .bn-block
+  > [data-content-type="bulletListItem"]::after {
+  border-radius: 0;
+  transform: rotate(45deg);
+  background-color: var(--bn-color-list-marker, #1c81d9);
+}
+
 /* Checked */
 .bn-block-content[data-content-type="checkListItem"] > div:has(> input) {
   height: 24px;
@@ -438,7 +475,7 @@ NESTED BLOCKS
 .bn-block-outer[data-prev-type="bulletListItem"]
   > .bn-block
   > .bn-block-content::before {
-  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Ccircle%20cx%3D%227%22%20cy%3D%2212%22%20r%3D%223%22%20fill%3D%22%231c81d9%22%2F%3E%3C%2Fsvg%3E");
+  content: " ";
 }
 
 .bn-block-outer:not([data-prev-type])
@@ -453,7 +490,7 @@ NESTED BLOCKS
   > :is(ins, del)
   > .bn-suggestion-node
   .bn-block-content[data-content-type="bulletListItem"]::before {
-  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Ccircle%20cx%3D%227%22%20cy%3D%2212%22%20r%3D%223%22%20fill%3D%22%231c81d9%22%2F%3E%3C%2Fsvg%3E");
+  content: " ";
 }
 
 /* 1 level of list nesting */
@@ -462,7 +499,7 @@ NESTED BLOCKS
   > .bn-block-outer[data-prev-type="bulletListItem"]
   > .bn-block
   > .bn-block-content::before {
-  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Ccircle%20cx%3D%227%22%20cy%3D%2212%22%20r%3D%222.625%22%20fill%3D%22none%22%20stroke%3D%22%231c81d9%22%20stroke-width%3D%22.75%22%2F%3E%3C%2Fsvg%3E");
+  content: " ";
 }
 
 [data-content-type="bulletListItem"]
@@ -476,7 +513,7 @@ NESTED BLOCKS
   > .bn-block
   > div[data-type="modification"]
   > .bn-block-content[data-content-type="bulletListItem"]::before {
-  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Ccircle%20cx%3D%227%22%20cy%3D%2212%22%20r%3D%222.625%22%20fill%3D%22none%22%20stroke%3D%22%231c81d9%22%20stroke-width%3D%22.75%22%2F%3E%3C%2Fsvg%3E");
+  content: " ";
 }
 
 /* 2 levels of list nesting */
@@ -487,7 +524,7 @@ NESTED BLOCKS
   > .bn-block-outer[data-prev-type="bulletListItem"]
   > .bn-block
   > .bn-block-content::before {
-  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M7%209%2010%2012%207%2015%204%2012Z%22%20fill%3D%22%231c81d9%22%2F%3E%3C%2Fsvg%3E");
+  content: " ";
 }
 
 [data-content-type="bulletListItem"]
@@ -505,7 +542,7 @@ NESTED BLOCKS
   > .bn-block
   > div[data-type="modification"]
   > .bn-block-content[data-content-type="bulletListItem"]::before {
-  content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M7%209%2010%2012%207%2015%204%2012Z%22%20fill%3D%22%231c81d9%22%2F%3E%3C%2Fsvg%3E");
+  content: " ";
 }
 
 /* CODE BLOCKS */

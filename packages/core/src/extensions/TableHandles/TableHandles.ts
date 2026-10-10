@@ -622,6 +622,9 @@ export class TableHandlesView implements PluginView {
   }
 
   destroy() {
+    // Handle state belongs to this mounted view, not the cached editor.
+    this.state = undefined;
+    this.emitUpdate();
     this.pmView.dom.removeEventListener("mousemove", this.mouseMoveHandler);
     window.removeEventListener("mouseup", this.mouseUpHandler);
     this.pmView.dom.removeEventListener("mousedown", this.viewMousedownHandler);
@@ -662,7 +665,16 @@ export const TableHandlesExtension = createExtension(({ editor }) => {
                 : undefined,
             );
           });
-          return view;
+          const mountedView = view;
+          return {
+            update: () => mountedView.update(),
+            destroy: () => {
+              if (view === mountedView) {
+                view = undefined;
+              }
+              mountedView.destroy();
+            },
+          };
         },
         // We use decorations to render the drop cursor when dragging a table row
         // or column. The decorations are updated in the `dragOverHandler` method.

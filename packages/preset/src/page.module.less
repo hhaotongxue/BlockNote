@@ -1442,8 +1442,8 @@
       var(--bn-editor-side-padding)
   );
   margin: 40px auto 0;
-  padding: 20px 0 20px;
-  border-top: 1px solid
+  padding: 20px 0 0;
+  border-top: 1px dashed
     var(--bn-page-color-border, var(--border-color, #eeeeee));
   box-sizing: border-box;
 }
@@ -1452,7 +1452,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 0;
   user-select: none;
 }
 
@@ -1477,16 +1477,28 @@
 .linksToggleBtn {
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
   background: transparent;
   border: none;
   color: var(--bn-page-color-text-tertiary, #a1a1aa);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  padding: 4px 0 4px 8px;
+  padding: 0;
+  line-height: 1;
   border-radius: 6px;
-  transition: all 150ms ease;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+
+  svg {
+    display: block;
+    flex-shrink: 0;
+  }
 
   &:hover {
     background: var(--bn-page-color-button-hover, rgba(0, 0, 0, 0.05));
@@ -1495,6 +1507,7 @@
 }
 
 .linksContent {
+  margin-top: 16px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -1516,6 +1529,10 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 24px;
+
+  &[data-single-column="true"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
 
   @container viewport (max-width: 560px) {
     grid-template-columns: 1fr;
@@ -1539,8 +1556,6 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding-bottom: 4px;
-  border-bottom: 1px dashed
-    var(--bn-page-color-border, var(--border-color, #eeeeee));
 }
 
 .columnList {

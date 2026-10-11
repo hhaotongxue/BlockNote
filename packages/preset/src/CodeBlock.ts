@@ -43,21 +43,25 @@ export function createPresetCodeBlockSpec(): ReturnType<
         setWrap(wrap);
         rendered.dom.prepend(toolbar);
         const root = createRoot(toolbar);
-        root.render(
-          createElement(CodeBlockToolbar, {
-            language: block.props.language,
-            editable: () => editor.isEditable,
-            initialWrap: wrap,
-            toolbar,
-            changeLanguage(language: string) {
-              if (editor.isEditable) {
-                editor.updateBlock(block.id, { props: { language } });
-              }
-            },
-            getCode: () => rendered.contentDOM?.textContent ?? "",
-            setWrap,
-          }),
-        );
+        let currentLanguage = block.props.language;
+        function renderToolbar(language: string) {
+          root.render(
+            createElement(CodeBlockToolbar, {
+              language,
+              editable: () => editor.isEditable,
+              initialWrap: wrap,
+              toolbar,
+              changeLanguage(language: string) {
+                if (editor.isEditable) {
+                  editor.updateBlock(block.id, { props: { language } });
+                }
+              },
+              getCode: () => rendered.contentDOM?.textContent ?? "",
+              setWrap,
+            }),
+          );
+        }
+        renderToolbar(currentLanguage);
         return {
           ...rendered,
           ignoreMutation(mutation) {
@@ -67,14 +71,28 @@ export function createPresetCodeBlockSpec(): ReturnType<
               toolbar.contains(mutation.target) ||
               (mutation.type === "attributes" &&
                 mutation.target === surface &&
-                mutation.attributeName === "data-code-wrap")
+                (mutation.attributeName === "data-code-wrap" ||
+                  mutation.attributeName === "data-language"))
             ) {
               return true;
             }
             return rendered.ignoreMutation?.(mutation) ?? false;
           },
           update(node) {
-            return node.attrs.language === block.props.language;
+            if (
+              node.type.name !== "codeBlock" ||
+              typeof node.attrs.language !== "string"
+            ) {
+              return false;
+            }
+            if (node.attrs.language !== currentLanguage) {
+              currentLanguage = node.attrs.language;
+              surface?.setAttribute("data-language", currentLanguage);
+              // Keep the code and toolbar DOM in place: replacing the node
+              // would discard focus and disturb the browser's scroll anchor.
+              renderToolbar(currentLanguage);
+            }
+            return true;
           },
           destroy() {
             // Node views can be destroyed during a React commit.

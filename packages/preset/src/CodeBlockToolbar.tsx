@@ -30,12 +30,16 @@ export function CodeBlockToolbar({
   const [dark, setDark] = useState(false);
   const [search, setSearch] = useState("");
   const combobox = useCombobox({
-    onDropdownOpen: () => combobox.focusSearchInput(),
     onDropdownClose: () => {
       combobox.resetSelectedOption();
       setSearch("");
     },
   });
+  useEffect(() => {
+    if (combobox.dropdownOpened) {
+      combobox.searchRef.current?.focus({ preventScroll: true });
+    }
+  }, [combobox.dropdownOpened, combobox.searchRef]);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const mounted = useRef(true);
   useEffect(() => {
@@ -132,8 +136,9 @@ export function CodeBlockToolbar({
             withinPortal
             portalProps={{ target: toolbar }}
             onOptionSubmit={(value) => {
-              changeLanguage(value);
               combobox.closeDropdown();
+              combobox.targetRef.current?.focus({ preventScroll: true });
+              changeLanguage(value);
             }}
           >
             <Combobox.Target>

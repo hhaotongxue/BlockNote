@@ -54,6 +54,8 @@ describe("preset code toolbar", () => {
       await vi.waitFor(() => {
         expect(host.querySelector(".shiki")).not.toBeNull();
       });
+      const codeDOM = host.querySelector("pre > code");
+      const toolbarDOM = host.querySelector(".bn-preset-code-toolbar");
       editor.updateBlock(editor.document[0].id, {
         props: { language: "typescript" },
       });
@@ -63,6 +65,8 @@ describe("preset code toolbar", () => {
         ),
       );
       expect(host.querySelectorAll(".bn-preset-code-toolbar")).toHaveLength(1);
+      expect(host.querySelector("pre > code")).toBe(codeDOM);
+      expect(host.querySelector(".bn-preset-code-toolbar")).toBe(toolbarDOM);
     } finally {
       editor.unmount();
       host.remove();
@@ -104,6 +108,50 @@ describe("preset code toolbar", () => {
     java.click();
     expect(editor.document[0].props.language).toBe("java");
     rendered.destroy?.();
+  });
+
+  it("keeps the code DOM and returns focus without scrolling when selecting a language", async () => {
+    const { editor, rendered } = renderCode("java");
+    const host = document.createElement("div");
+    document.body.append(host);
+    editor.mount(host);
+    const focus = vi.spyOn(HTMLElement.prototype, "focus");
+    try {
+      await vi.waitFor(() =>
+        expect(host.querySelector('[aria-label="代码语言"]')).not.toBeNull(),
+      );
+      const trigger = host.querySelector<HTMLButtonElement>(
+        '[aria-label="代码语言"]',
+      )!;
+      const codeDOM = host.querySelector("pre > code");
+      trigger.click();
+      await vi.waitFor(() =>
+        expect(
+          host.querySelector('[aria-label="搜索代码语言"]'),
+        ).not.toBeNull(),
+      );
+      await vi.waitFor(() =>
+        expect(document.activeElement?.getAttribute("aria-label")).toBe(
+          "搜索代码语言",
+        ),
+      );
+      focus.mockClear();
+      const option = Array.from(
+        host.querySelectorAll<HTMLElement>('[role="option"]'),
+      ).find((item) => item.textContent === "Python")!;
+      option.click();
+      await vi.waitFor(() => expect(trigger.textContent).toBe("Python"));
+      expect(editor.document[0].props.language).toBe("python");
+      expect(host.querySelector("pre > code")).toBe(codeDOM);
+      expect(host.querySelector('[aria-label="代码语言"]')).toBe(trigger);
+      expect(document.activeElement).toBe(trigger);
+      expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+    } finally {
+      focus.mockRestore();
+      editor.unmount();
+      host.remove();
+      rendered.destroy?.();
+    }
   });
 
   it("keeps unknown legacy languages readable", async () => {

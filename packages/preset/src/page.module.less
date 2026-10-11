@@ -188,6 +188,8 @@
 }
 
 .contentContainer {
+  box-sizing: border-box;
+  flex-shrink: 0;
   width: 100%;
   min-width: 0;
   height: auto;
@@ -201,6 +203,11 @@
   &.hasCover {
     padding-top: 0;
   }
+}
+
+/* Special documents omit the toolbar and its reserved vertical space. */
+.editorWrapper[data-has-toolbar="false"] .contentContainer:not(.hasCover) {
+  padding-top: 54px;
 }
 
 .docTitleHoverArea {
@@ -1425,12 +1432,14 @@
 
 /* Bi-Directional Links Section Styles */
 .bidirectionalLinks {
-  width: var(--affine-editor-width);
+  width: calc(
+    var(--affine-editor-width) - var(--bn-editor-side-padding) -
+      var(--bn-editor-side-padding)
+  );
   margin: 40px auto 0;
-  padding: 0 24px;
+  padding: 20px 0 20px;
   border-top: 1px solid
     var(--bn-page-color-border, var(--border-color, #eeeeee));
-  padding-top: 24px;
   box-sizing: border-box;
 }
 
@@ -1470,7 +1479,7 @@
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 4px 0 4px 8px;
   border-radius: 6px;
   transition: all 150ms ease;
 
@@ -1500,15 +1509,16 @@
 
 .linksColumns {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 24px;
 
-  @media (max-width: 768px) {
+  @container viewport (max-width: 560px) {
     grid-template-columns: 1fr;
   }
 }
 
 .linksColumn {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1588,8 +1598,7 @@
 .noLinksMsg {
   font-size: 13px;
   color: var(--bn-page-color-text-tertiary, #a1a1aa);
-  font-style: italic;
-  padding: 6px 12px;
+  padding: 6px 0;
 }
 
 .moreMenuPopover {

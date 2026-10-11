@@ -14,12 +14,7 @@
 .bn-preset-card .bn-editor {
   padding: 0;
   min-height: 0;
-  font-size: 13px;
-  line-height: 1.6;
   background: transparent;
-}
-.bn-preset-card .bn-block-content[data-content-type="heading"] {
-  --level: 1.15em;
 }
 .bn-preset-card[data-mode="readonly"] .bn-editor {
   pointer-events: none;

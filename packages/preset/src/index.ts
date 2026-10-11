@@ -10,3 +10,10 @@ export {
   createDocumentSchema,
   type DocumentReferenceOptions,
 } from "./DocumentSchema.js";
+
+export {
+  DocumentActionItems,
+  type DocumentActionItem,
+} from "./DocumentActionItems.js";
+
+export { CardEditorView } from "./CardEditorView.js";

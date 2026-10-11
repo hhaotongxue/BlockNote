@@ -35,3 +35,11 @@ corepack pnpm@11.8.0 exec vp run --filter @blocknote/core --filter @blocknote/re
 ## 统一提示
 
 菜单、工具栏和页面图标统一使用导出的 `EditorTooltip`。传 `label` 与一个可接收 ref 的子元素；页面外使用时可传 `colorScheme="light"` / `"dark"`。编辑器浮层内可通过 `portalProps.target` 指向 `usePortalElement()` 返回的主题容器。不要直接使用 Mantine Tooltip、原生 title 或 CSS 伪元素另画一层提示。背景、字体、留白统一由 Mantine 皮肤的 tooltip 规则维护。
+
+## 卡片视图
+
+`CardEditorView` 接收 `editor`、`theme`、`mode: "readonly" | "editable"` 和可选 `maxHeight`（默认 320px）和 `scrollable`（默认 true）。卡片始终只有正文，不含标题、保存、Git 或业务动作。只读模式关闭编辑及菜单；可编辑模式复用精简编辑 UI。宿主负责创建独立 editor view 并绑定共享文档、加载/卸载及可选历史追踪。完整页面继续使用 `EditorView`。
+
+炼书的 `DocumentCard` 是原生文档适配器：交付使用只读裁剪预览并由业务外壳显示标题；闪念使用不带标题的只读/可编辑模式。
+
+卡片仅在实际溢出的方向显示渐隐，滚到底部后底部渐隐消失。`scrollable={false}` 固定为顶部预览，保留溢出渐隐提示；标题和打开完整文档的行为仍由宿主提供。

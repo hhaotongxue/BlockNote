@@ -2305,3 +2305,41 @@
 .propertyMenuAnchor {
   position: relative;
 }
+
+.documentActionError {
+  margin: 6px 10px;
+  font-size: 12px;
+  color: var(--bn-page-color-text-secondary, #52525b);
+}
+.documentActionConfirmation {
+  padding: 8px 10px;
+  p {
+    margin: 0 0 12px;
+    max-width: 240px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--bn-page-color-text-primary, #18181b);
+  }
+  > div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  button {
+    padding: 5px 9px;
+    border: 1px solid var(--bn-page-color-border, #eeeeee);
+    border-radius: 5px;
+    background: transparent;
+    color: var(--bn-page-color-text-primary, #18181b);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    &:hover {
+      background: var(--bn-page-color-button-hover, rgba(128, 128, 128, 0.12));
+    }
+    &:focus-visible {
+      outline: 2px solid var(--primary-color, #50c8e8);
+      outline-offset: 2px;
+    }
+  }
+}

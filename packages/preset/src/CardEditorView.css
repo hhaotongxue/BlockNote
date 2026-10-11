@@ -1,0 +1,53 @@
+.bn-preset-card-host {
+  min-height: 40px;
+}
+.bn-preset-card {
+  min-width: 0;
+  width: 100%;
+}
+.bn-preset-card-viewport {
+  max-height: var(--bn-card-max-height, 320px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.bn-preset-card .bn-editor {
+  padding: 0;
+  min-height: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  background: transparent;
+}
+.bn-preset-card .bn-block-content[data-content-type="heading"] {
+  --level: 1.15em;
+}
+.bn-preset-card[data-mode="readonly"] .bn-editor {
+  pointer-events: none;
+}
+.bn-preset-card[data-mode="readonly"] [data-placeholder]::before {
+  display: none;
+}
+.bn-preset-card img,
+.bn-preset-card video {
+  max-height: 140px;
+  object-fit: contain;
+}
+
+.bn-preset-card-viewport[data-scrollable="false"] {
+  overflow: hidden;
+}
+.bn-preset-card-viewport[data-overflow-bottom="true"] {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+}
+.bn-preset-card-viewport[data-overflow-top="true"] {
+  mask-image: linear-gradient(to bottom, transparent, #000 24px);
+}
+.bn-preset-card-viewport[data-overflow-top="true"][data-overflow-bottom="true"] {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 24px,
+    #000 calc(100% - 28px),
+    transparent
+  );
+}

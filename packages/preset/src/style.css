@@ -5,6 +5,7 @@
 @import "./BlockNoteCommandMenu.css";
 @import "./BlockNoteFormattingToolbar.css";
 @import "./CodeBlock.css";
+@import "./CardEditorView.css";
 
 .bn-preset-bookmark {
   width: 100%;

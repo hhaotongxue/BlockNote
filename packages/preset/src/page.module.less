@@ -189,12 +189,15 @@
 
 .contentContainer {
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   flex-shrink: 0;
   width: 100%;
   min-width: 0;
   height: auto;
+  min-height: 100%;
   margin: 0 auto;
-  padding: 102px 0 120px;
+  padding: 102px 0 20px;
   overflow: visible;
   --affine-editor-width: min(760px, calc(100% - 48px));
   --affine-editor-side-padding: 24px;
@@ -937,10 +940,11 @@
 
 .blocksuiteContainer {
   box-sizing: border-box;
+  flex: 1 0 auto;
   width: var(--affine-editor-width);
   min-width: 0;
   margin-inline: auto;
-  min-height: calc(100% - 90px);
+  min-height: 0;
 
   /* Restrict fold caret SVG size to 10px to match official AFFiNE styling and align natively */
   :global(.toggle-icon svg) {
@@ -1432,6 +1436,7 @@
 
 /* Bi-Directional Links Section Styles */
 .bidirectionalLinks {
+  flex-shrink: 0;
   width: calc(
     var(--affine-editor-width) - var(--bn-editor-side-padding) -
       var(--bn-editor-side-padding)

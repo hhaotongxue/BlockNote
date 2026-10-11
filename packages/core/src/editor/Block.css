@@ -994,8 +994,8 @@ NESTED BLOCKS
 /* PLACEHOLDERS*/
 .bn-block-content:has(.ProseMirror-trailingBreak:only-child):after {
   font-style: normal;
-  /* Removes text cursor offset. */
-  margin-inline: -2px;
+  /* Keep the placeholder clear of the caret at the start of an empty block. */
+  margin-inline: 0 -2px;
   pointer-events: none;
   max-width: 100%;
 }

@@ -4,7 +4,7 @@
   --bn-preset-text-secondary: var(--color-text-secondary, #52525b);
   --bn-preset-text-tertiary: var(--color-text-tertiary, #a1a1aa);
   --bn-preset-bg-card: var(--color-bg-card, #fff);
-  --bn-preset-bg-secondary: var(--color-bg-secondary, #f4f4f5);
+  --bn-preset-bg-secondary: var(--color-bg-secondary, #f7f7f7);
   --bn-preset-border: var(--color-border, #eee);
   --bn-preset-button-hover: var(--color-button-hover, rgb(0 0 0 / 5%));
   --bn-preset-error: var(--color-error, #ef4444);
@@ -15,7 +15,7 @@
   --bn-preset-text-secondary: var(--color-text-secondary, #a1a1aa);
   --bn-preset-text-tertiary: var(--color-text-tertiary, #71717a);
   --bn-preset-bg-card: var(--color-bg-card, #141414);
-  --bn-preset-bg-secondary: var(--color-bg-secondary, #252528);
+  --bn-preset-bg-secondary: var(--color-bg-secondary, #262626);
   --bn-preset-border: var(--color-border, #2c2c2e);
   --bn-preset-button-hover: var(--color-button-hover, rgb(255 255 255 / 8%));
   --bn-preset-error: var(--color-error, #ef4444);

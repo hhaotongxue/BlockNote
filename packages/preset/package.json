@@ -25,6 +25,7 @@
     "lint": "vp lint src"
   },
   "dependencies": {
+    "@blocknote/code-block": "workspace:^",
     "@blocknote/core": "workspace:^",
     "@blocknote/react": "workspace:^",
     "@blocknote/mantine": "workspace:^",
@@ -38,6 +39,7 @@
     "less": "^4.0.0"
   },
   "devDependencies": {
+    "vite-plus": "catalog:",
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3"
   }

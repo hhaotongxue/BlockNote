@@ -17,6 +17,12 @@ import "@blocknote/preset/style.css";
 
 主题继承宿主通用颜色变量，同时提供独立浅色/深色默认值。消费者不应写编辑器 CSS 覆盖。勾选动画来自 BlockSuite MPL-2.0，来源保留在 checkAnimation.ts。
 
+`createDocumentSchema()` 包含主题自适应的代码块、语言选择和复制按钮，并通过 `@blocknote/code-block` 按需加载 Shiki 高亮。代码块保留原生 schema、快捷键和 HTML 导出；未知语言仍可展示，纯文本可手动选择语言启用高亮。源码接入时，将 `@blocknote/code-block` 一并 alias 到本 fork 的 `packages/code-block/src/index.ts`。独立消费时先构建此依赖包。
+
+代码块底色统一读取 `--bn-preset-bg-secondary`，宿主通过全局 `--color-bg-secondary` 提供中性灰；不在代码块组件维护独立色值。右上角工具栏依次为语言、复制、自动换行。默认自动换行，关闭后保持原始行并允许横向滚动；换行选择仅为当前编辑器会话的显示偏好，不写入正文或撤销历史。
+
+代码块交互回归：在仓库根目录运行 `vp test --config packages/preset/tests/vite.config.ts --run`。
+
 ## 本地准备
 
 ```sh

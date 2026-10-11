@@ -11,6 +11,7 @@ import {
   createReactMathBlockSpec,
   createReactInlineMathSpec,
 } from "@blocknote/math-block";
+import { createPresetCodeBlockSpec } from "./CodeBlock.js";
 
 export interface DocumentReferenceOptions {
   resolveDocument?: (
@@ -24,6 +25,7 @@ export function createDocumentSchema(options: DocumentReferenceOptions = {}) {
   return BlockNoteSchema.create({
     blockSpecs: {
       ...defaultBlockSpecs,
+      codeBlock: createPresetCodeBlockSpec(),
       mathBlock: createReactMathBlockSpec(),
       bookmark: createReactBlockSpec(
         {

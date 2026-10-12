@@ -181,6 +181,25 @@ it("loads intrinsic image ratios and handles side drops with the native document
     );
     const source = host.querySelector('[data-block-id="portrait"]')!;
     const target = host.querySelector('[data-block-id="landscape"]')!;
+    editor.setTextCursorPosition("portrait");
+    editor.focus();
+    await vi.waitFor(() => {
+      expect(editor.domElement?.classList.contains("ProseMirror-focused")).toBe(
+        true,
+      );
+      expect(source.closest(".ProseMirror-selectednode")).not.toBeNull();
+    });
+    const outside = document.createElement("div");
+    document.body.append(outside);
+    // App surfaces may stop bubbling and need not be focusable.
+    outside.addEventListener("pointerdown", (event) => event.stopPropagation());
+    outside.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+    await vi.waitFor(() =>
+      expect(editor.domElement?.classList.contains("ProseMirror-focused")).toBe(
+        false,
+      ),
+    );
+    outside.remove();
     const outer = target.closest<HTMLElement>(".bn-block-outer")!;
     vi.spyOn(outer, "getBoundingClientRect").mockReturnValue({
       left: 0,

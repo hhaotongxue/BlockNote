@@ -10,7 +10,34 @@
   background: var(--bn-colors-hovered-background);
   box-shadow: inset 0 0 0 1px var(--bn-colors-border);
 }
-.bn-media-card[data-selected] .bn-media-card-preview {
+/* Replace the native whole-block tint with a focus-aware media-only outline. */
+.ProseMirror-selectednode
+  > .bn-block-content:is(
+    [data-content-type="aiImage"],
+    [data-content-type="aiVideo"]
+  )
+  > *::after,
+.bn-block-content:is(
+    [data-content-type="aiImage"],
+    [data-content-type="aiVideo"]
+  ).ProseMirror-selectednode
+  > *::after {
+  content: none;
+}
+.bn-media-card[data-selected] .bn-media-card-preview,
+.ProseMirror-focused
+  .ProseMirror-selectednode
+  > .bn-block-content:is(
+    [data-content-type="aiImage"],
+    [data-content-type="aiVideo"]
+  )
+  .bn-media-card-preview,
+.ProseMirror-focused
+  .bn-block-content:is(
+    [data-content-type="aiImage"],
+    [data-content-type="aiVideo"]
+  ).ProseMirror-selectednode
+  .bn-media-card-preview {
   outline: 1px solid var(--bn-colors-highlights-blue-text);
   outline-offset: 2px;
 }

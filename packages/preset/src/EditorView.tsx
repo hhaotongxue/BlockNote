@@ -31,6 +31,28 @@ export function EditorView<
       return installMediaDrag(props.editor, root);
     }
   }, [props.editor]);
+  useEffect(() => {
+    function dismissMediaSelection(event: PointerEvent) {
+      const root = props.editor.domElement;
+      const target = event.target;
+      if (!root || !(target instanceof Element) || root.contains(target)) {
+        return;
+      }
+      if (target.closest(".bn-media-card-panel")) {
+        return;
+      }
+      if (
+        root.querySelector(
+          ".ProseMirror-selectednode .bn-media-card, .bn-media-card.ProseMirror-selectednode",
+        )
+      ) {
+        props.editor.blur();
+      }
+    }
+    document.addEventListener("pointerdown", dismissMediaSelection, true);
+    return () =>
+      document.removeEventListener("pointerdown", dismissMediaSelection, true);
+  }, [props.editor]);
   return (
     <BlockNoteView
       {...props}

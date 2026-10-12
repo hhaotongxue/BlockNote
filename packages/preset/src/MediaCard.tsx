@@ -197,10 +197,10 @@ function MediaCard({
         setPanelOpen(false);
       }
     }
-    document.addEventListener("pointerdown", outside);
+    document.addEventListener("pointerdown", outside, true);
     document.addEventListener("keydown", escape);
     return () => {
-      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("pointerdown", outside, true);
       document.removeEventListener("keydown", escape);
     };
   }, [panelOpen]);

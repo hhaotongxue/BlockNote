@@ -101,7 +101,6 @@ function MediaCard({
     x: number;
     width: number;
     maximum: number;
-    side: number;
   } | null>(null);
   const loaded = dimensions.source === url;
   const ratio = mediaRatio(
@@ -398,90 +397,92 @@ function MediaCard({
                 </span>
               )
             )}
-            {editable &&
-              (["left", "right"] as const).map((side) => (
-                <button
-                  key={side}
-                  type="button"
-                  className={`bn-media-resize bn-media-resize-${side}`}
-                  aria-label={
-                    side === "left" ? "从左侧缩放图片" : "从右侧缩放图片"
+            {editable && (
+              <button
+                type="button"
+                className="bn-media-resize"
+                aria-label={video ? "缩放视频" : "缩放图片"}
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  const node = card.current;
+                  if (!node) {
+                    return;
                   }
-                  onPointerDown={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    const node = card.current;
-                    if (!node) {
-                      return;
-                    }
-                    resize.current = {
-                      x: event.clientX,
-                      width: node.getBoundingClientRect().width,
-                      maximum:
+                  resize.current = {
+                    x: event.clientX,
+                    width: node.getBoundingClientRect().width,
+                    maximum:
+                      node.parentElement?.clientWidth || node.clientWidth,
+                  };
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                  const initial = resize.current;
+                  if (!initial) {
+                    return;
+                  }
+                  setResizeWidth(
+                    Math.min(
+                      initial.maximum,
+                      Math.max(64, initial.width + (event.clientX - initial.x)),
+                    ),
+                  );
+                }}
+                onPointerUp={(event) => {
+                  if (!resize.current) {
+                    return;
+                  }
+                  const initial = resize.current;
+                  const width = Math.min(
+                    initial.maximum,
+                    Math.max(64, initial.width + (event.clientX - initial.x)),
+                  );
+                  resize.current = null;
+                  setResizeWidth(null);
+                  update({ previewWidth: width });
+                  event.currentTarget.releasePointerCapture(event.pointerId);
+                }}
+                onPointerCancel={() => {
+                  resize.current = null;
+                  setResizeWidth(null);
+                }}
+                onKeyDown={(event) => {
+                  if (!["ArrowLeft", "ArrowRight"].includes(event.key)) {
+                    return;
+                  }
+                  event.preventDefault();
+                  const node = card.current;
+                  if (node) {
+                    update({
+                      previewWidth: Math.min(
                         node.parentElement?.clientWidth || node.clientWidth,
-                      side: side === "left" ? -1 : 1,
-                    };
-                    event.currentTarget.setPointerCapture(event.pointerId);
-                  }}
-                  onPointerMove={(event) => {
-                    const initial = resize.current;
-                    if (!initial) {
-                      return;
-                    }
-                    setResizeWidth(
-                      Math.min(
-                        initial.maximum,
                         Math.max(
                           64,
-                          initial.width +
-                            (event.clientX - initial.x) * initial.side,
+                          node.clientWidth +
+                            (event.key === "ArrowRight" ? 16 : -16),
                         ),
                       ),
-                    );
-                  }}
-                  onPointerUp={(event) => {
-                    if (!resize.current) {
-                      return;
-                    }
-                    const initial = resize.current;
-                    const width = Math.min(
-                      initial.maximum,
-                      Math.max(
-                        64,
-                        initial.width +
-                          (event.clientX - initial.x) * initial.side,
-                      ),
-                    );
-                    resize.current = null;
-                    setResizeWidth(null);
-                    update({ previewWidth: width });
-                    event.currentTarget.releasePointerCapture(event.pointerId);
-                  }}
-                  onPointerCancel={() => {
-                    resize.current = null;
-                    setResizeWidth(null);
-                  }}
-                  onKeyDown={(event) => {
-                    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) {
-                      return;
-                    }
-                    event.preventDefault();
-                    const node = card.current;
-                    if (node) {
-                      update({
-                        previewWidth: Math.min(
-                          node.parentElement?.clientWidth || node.clientWidth,
-                          Math.max(
-                            64,
-                            node.clientWidth +
-                              (event.key === "ArrowRight" ? 16 : -16),
-                          ),
-                        ),
-                      });
-                    }
-                  }}
-                />
-              ))}
+                    });
+                  }
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 12L12 4M8 12L12 8M12 12H12.01"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            )}
             {editable && (
               <button
                 type="button"

@@ -3,5 +3,10 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   root: fileURLToPath(new URL("../../../", import.meta.url)),
-  test: { include: ["packages/preset/tests/code-block.test.ts"] },
+  test: {
+    include: [
+      "packages/preset/tests/code-block.test.ts",
+      "packages/preset/tests/media-card.test.tsx",
+    ],
+  },
 });

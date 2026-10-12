@@ -1,22 +1,48 @@
-import { useEffect, useRef, useState } from "react";
-import { createReactBlockSpec } from "@blocknote/react";
-import { Image, Video, Upload, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Popover } from "@mantine/core";
+import {
+  createReactBlockSpec,
+  PortalElementOverride,
+  usePortalElement,
+} from "@blocknote/react";
+import { Image, Video, SlidersHorizontal } from "lucide-react";
 
 export type MediaCardKind = "aiImage" | "aiVideo";
-export interface MediaCardModel {
-  name: string;
-  aspectRatios: string[];
-  resolutions: string[];
-  durations: number[];
-}
 export interface MediaCardTask {
   status: string;
   description?: string;
   error?: string;
 }
+export interface MediaCardValues {
+  url: string;
+  caption: string;
+  name: string;
+  aiEnabled: boolean;
+  prompt: string;
+  modelKey: string;
+  aspectRatio: string;
+  resolution: string;
+  duration: number;
+  taskId: string;
+}
+/** Slot content is owned by the host. The editor owns the floating containers. */
+export interface MediaCardSlotContext {
+  blockId: string;
+  kind: MediaCardKind;
+  values: MediaCardValues;
+  resolvedUrl: string;
+  portalTarget?: HTMLElement;
+  busy: boolean;
+  uploading: boolean;
+  update: (patch: Partial<MediaCardValues>) => void;
+  upload: () => void;
+  remove: () => void;
+  close: () => void;
+}
 export interface MediaCardRuntime {
-  model: (kind: MediaCardKind) => Promise<MediaCardModel>;
-  generate: (blockId: string) => Promise<unknown>;
+  renderMediaToolbar?: (context: MediaCardSlotContext) => ReactNode;
+  renderMediaPanel?: (context: MediaCardSlotContext) => ReactNode;
+  notifyError?: (message: string) => void;
   task: (taskId: string) => MediaCardTask | undefined;
   subscribe: (listener: () => void) => () => void;
   cancel: (taskId: string) => void;
@@ -28,6 +54,7 @@ export const mediaCardProps = {
   name: { default: "" },
   aiEnabled: { default: false },
   prompt: { default: "" },
+  modelKey: { default: "" },
   aspectRatio: { default: "" },
   resolution: { default: "" },
   duration: { default: 5 },
@@ -43,20 +70,23 @@ function MediaCard({
   editor: any;
   runtime?: MediaCardRuntime;
 }) {
-  const props = block.props;
+  const props: MediaCardValues = block.props;
   const video = block.type === "aiVideo";
-  const root = useRef<HTMLDivElement>(null);
-  const input = useRef<HTMLInputElement>(null);
-  const [selected, setSelected] = useState(false);
-  const [url, setUrl] = useState("");
-  const [model, setModel] = useState<MediaCardModel>();
-  const [error, setError] = useState("");
+  const portalElement = usePortalElement();
+  const [fileInput, setFileInput] = useState<HTMLInputElement | null>(null);
+  const card = useRef<HTMLDivElement>(null);
+  const toolbar = useRef<HTMLDivElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [resolvedMedia, setResolvedMedia] = useState({ source: "", url: "" });
+  const url = resolvedMedia.source === props.url ? resolvedMedia.url : "";
   const [uploading, setUploading] = useState(false);
   const [, refresh] = useState(0);
   const task = runtime?.task(props.taskId);
   const busy = task?.status === "running" || task?.status === "queued";
   const editable = editor.isEditable;
-  const update = (patch: Record<string, unknown>) =>
+  const update = (patch: Partial<MediaCardValues>) =>
     editor.updateBlock(block.id, { props: patch });
 
   useEffect(
@@ -65,68 +95,61 @@ function MediaCard({
   );
   useEffect(() => {
     let active = true;
-    setUrl("");
     if (props.url) {
       Promise.resolve(
         editor.resolveFileUrl ? editor.resolveFileUrl(props.url) : props.url,
       )
         .then((value) => {
           if (active) {
-            setUrl(value);
+            setResolvedMedia({ source: props.url, url: value });
           }
         })
         .catch(() => {
           if (active) {
-            setError("素材读取失败，请重新上传");
+            runtime?.notifyError?.("素材读取失败，请重新上传");
           }
         });
     }
     return () => {
       active = false;
     };
-  }, [editor, props.url]);
+  }, [editor, props.url, runtime]);
   useEffect(() => {
-    if (!props.aiEnabled || !runtime) {
+    if (!panelOpen) {
       return;
     }
-    let active = true;
-    runtime
-      .model(block.type)
-      .then((value) => {
-        if (active) {
-          setModel(value);
-          setError("");
-        }
-      })
-      .catch((reason) => {
-        if (active) {
-          setError(String(reason.message || reason));
-        }
-      });
-    return () => {
-      active = false;
-    };
-  }, [runtime, block.type, props.aiEnabled, selected]);
-  useEffect(() => {
-    const outside = (event: PointerEvent) => {
-      if (!root.current?.contains(event.target as Node)) {
-        setSelected(false);
+    function outside(event: PointerEvent) {
+      const target = event.target as Node;
+      if (
+        ![card.current, toolbar.current, panel.current].some((element) =>
+          element?.contains(target),
+        )
+      ) {
+        setPanelOpen(false);
       }
-    };
+    }
+    function escape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setPanelOpen(false);
+      }
+    }
     document.addEventListener("pointerdown", outside);
-    return () => document.removeEventListener("pointerdown", outside);
-  }, []);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [panelOpen]);
 
   async function upload(file?: File) {
     if (!file || !editable || uploading) {
       return;
     }
     if (!file.type.startsWith(video ? "video/" : "image/")) {
-      setError(video ? "请选择视频文件" : "请选择图片文件");
+      runtime?.notifyError?.(video ? "请选择视频文件" : "请选择图片文件");
       return;
     }
     setUploading(true);
-    setError("");
     try {
       if (!editor.uploadFile) {
         throw new Error("当前编辑器未配置上传服务");
@@ -144,21 +167,40 @@ function MediaCard({
         aiEnabled: false,
         taskId: "",
       });
-    } catch (reason: any) {
-      setError(reason.message || "上传失败");
+    } catch {
+      runtime?.notifyError?.("上传失败，请重试");
     } finally {
       setUploading(false);
     }
   }
 
+  const context: MediaCardSlotContext = {
+    blockId: block.id,
+    kind: block.type,
+    values: props,
+    resolvedUrl: url,
+    portalTarget: portalElement || undefined,
+    busy: Boolean(busy),
+    uploading,
+    update,
+    upload: () => fileInput?.click(),
+    remove: () => {
+      if (props.taskId && busy) {
+        runtime?.cancel(props.taskId);
+      }
+      editor.removeBlocks([block.id]);
+    },
+    close: () => setPanelOpen(false),
+  };
+  const portalProps = portalElement ? { target: portalElement } : undefined;
   return (
     <div
-      ref={root}
+      ref={card}
       className="bn-media-card"
-      data-selected={selected || undefined}
+      data-selected={panelOpen || undefined}
       contentEditable={false}
-      onPointerDown={() => setSelected(true)}
-      onFocus={() => setSelected(true)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       onDrop={(event) => {
         if (!editable) {
           return;
@@ -173,155 +215,117 @@ function MediaCard({
         }
       }}
     >
-      <div className="bn-media-card-toolbar">
-        <span>
-          {video ? <Video size={16} /> : <Image size={16} />}
-          {video ? "视频卡片" : "图片卡片"}
-        </span>
-        {editable && (
-          <div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={props.aiEnabled}
-              aria-label="AI 创作"
-              onClick={() => update({ aiEnabled: !props.aiEnabled })}
-            >
-              <Sparkles size={15} /> AI {props.aiEnabled ? "开启" : "关闭"}
-            </button>
-            <button
-              type="button"
-              disabled={uploading}
-              onClick={() => input.current?.click()}
-              aria-label={video ? "上传视频" : "上传图片"}
-            >
-              <Upload size={16} />
-            </button>
-          </div>
-        )}
-      </div>
-      <div
-        className="bn-media-card-preview"
-        style={{
-          aspectRatio: url
-            ? undefined
-            : (props.aspectRatio || "16:9").replace(":", "/"),
-        }}
-      >
-        {url ? (
-          video ? (
-            <video src={url} controls preload="metadata" />
-          ) : (
-            <img
-              src={url}
-              alt={props.caption || props.name || "图片"}
-              loading="lazy"
-            />
-          )
-        ) : (
-          <button
-            type="button"
-            disabled={!editable || uploading}
-            onClick={() => input.current?.click()}
+      {editable && (
+        <Popover
+          opened={panelOpen && Boolean(runtime?.renderMediaToolbar)}
+          position="top"
+          offset={12}
+          width="max-content"
+          withinPortal
+          portalProps={portalProps}
+          floatingStrategy="fixed"
+          closeOnClickOutside={false}
+          closeOnEscape={false}
+          middlewares={{ flip: false, shift: true }}
+        >
+          <Popover.Target>
+            <span className="bn-media-card-top-anchor" aria-hidden="true" />
+          </Popover.Target>
+          <Popover.Dropdown
+            ref={toolbar}
+            className="bn-media-card-panel bn-media-card-toolbar-panel"
+            role="toolbar"
+            aria-label={video ? "视频操作" : "图片操作"}
           >
-            {video ? <Video size={32} /> : <Image size={32} />}
-            <span>
-              {uploading
-                ? "正在上传…"
-                : video
-                  ? "上传或拖入视频"
-                  : "上传或拖入图片"}
-            </span>
-          </button>
-        )}
-        {busy && (
-          <div role="status" className="bn-media-card-status">
-            {task?.description || "正在生成…"}
+            {runtime?.renderMediaToolbar?.(context)}
+          </Popover.Dropdown>
+        </Popover>
+      )}
+      <Popover
+        opened={
+          editable &&
+          panelOpen &&
+          props.aiEnabled &&
+          Boolean(runtime?.renderMediaPanel)
+        }
+        position="bottom"
+        offset={12}
+        width={620}
+        withinPortal
+        portalProps={portalProps}
+        floatingStrategy="fixed"
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        middlewares={{ flip: false, shift: true }}
+      >
+        <Popover.Target>
+          <div
+            className="bn-media-card-preview"
+            style={{
+              aspectRatio: (props.aspectRatio || "16:9").replace(":", "/"),
+            }}
+          >
+            {url ? (
+              video ? (
+                <video
+                  src={url}
+                  controls={hovered || panelOpen}
+                  preload="metadata"
+                  onClick={() => setHovered(true)}
+                />
+              ) : (
+                <img
+                  src={url}
+                  alt={props.caption || props.name || "图片"}
+                  loading="lazy"
+                />
+              )
+            ) : (
+              <span
+                className="bn-media-card-placeholder"
+                role="img"
+                aria-label={video ? "视频卡片" : "图片卡片"}
+              >
+                {video ? (
+                  <Video size={28} strokeWidth={1.5} />
+                ) : (
+                  <Image size={28} strokeWidth={1.5} />
+                )}
+              </span>
+            )}
+            {editable && (
+              <button
+                type="button"
+                className="bn-media-card-trigger"
+                onClick={() => setPanelOpen((value) => !value)}
+                aria-label={video ? "视频设置" : "图片设置"}
+                aria-expanded={panelOpen}
+                aria-haspopup="dialog"
+              >
+                <SlidersHorizontal size={17} />
+              </button>
+            )}
+            {(busy || uploading) && (
+              <div role="status" className="bn-media-card-status">
+                {uploading ? "正在上传…" : task?.description || "正在生成…"}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </Popover.Target>
+        <Popover.Dropdown
+          ref={panel}
+          className="bn-media-card-panel bn-media-card-generation-panel"
+          role="dialog"
+          aria-label={video ? "视频生成配置" : "图片生成配置"}
+        >
+          {runtime?.renderMediaPanel?.(context)}
+        </Popover.Dropdown>
+      </Popover>
       {props.caption && (
         <div className="bn-media-card-caption">{props.caption}</div>
       )}
-      {editable && props.aiEnabled && selected && (
-        <div className="bn-media-card-config">
-          <textarea
-            aria-label="生成提示词"
-            placeholder={video ? "描述想生成的视频…" : "描述想生成的图片…"}
-            value={props.prompt}
-            onChange={(event) => update({ prompt: event.target.value })}
-            rows={3}
-          />
-          <div className="bn-media-card-options">
-            <span title={model?.name}>{model?.name || "默认模型"}</span>
-            <select
-              aria-label="比例"
-              value={props.aspectRatio}
-              onChange={(event) => update({ aspectRatio: event.target.value })}
-            >
-              <option value="">默认比例</option>
-              {model?.aspectRatios.map((value) => (
-                <option key={value}>{value}</option>
-              ))}
-            </select>
-            <select
-              aria-label="分辨率"
-              value={props.resolution}
-              onChange={(event) => update({ resolution: event.target.value })}
-            >
-              <option value="">默认分辨率</option>
-              {model?.resolutions.map((value) => (
-                <option key={value}>{value}</option>
-              ))}
-            </select>
-            {video && (
-              <select
-                aria-label="视频时长"
-                value={props.duration}
-                onChange={(event) =>
-                  update({ duration: Number(event.target.value) })
-                }
-              >
-                {[
-                  ...new Set([props.duration, ...(model?.durations || [])]),
-                ].map((value) => (
-                  <option key={value} value={value}>
-                    {value} 秒
-                  </option>
-                ))}
-              </select>
-            )}
-            {busy ? (
-              <button
-                type="button"
-                onClick={() => runtime?.cancel(props.taskId)}
-              >
-                停止
-              </button>
-            ) : (
-              <button
-                type="button"
-                disabled={!runtime || !props.prompt.trim() || uploading}
-                onClick={() => {
-                  setError("");
-                  void runtime
-                    ?.generate(block.id)
-                    .catch((reason) => setError(reason.message || "生成失败"));
-                }}
-              >
-                生成
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-      {(error || task?.error) && (
-        <div role="alert" className="bn-media-card-error">
-          {error || task?.error}
-        </div>
-      )}
       <input
-        ref={input}
+        ref={setFileInput}
         type="file"
         accept={video ? "video/*" : "image/*"}
         hidden
@@ -343,7 +347,11 @@ export function createMediaCardSpec<T extends MediaCardKind>(
     {
       meta: { fileBlockAccept: [type === "aiVideo" ? "video/*" : "image/*"] },
       render: ({ block, editor }) => (
-        <MediaCard block={block} editor={editor} runtime={runtime} />
+        <PortalElementOverride
+          target={typeof document === "undefined" ? undefined : document.body}
+        >
+          <MediaCard block={block} editor={editor} runtime={runtime} />
+        </PortalElementOverride>
       ),
       toExternalHTML: ({ block }) => {
         const url = String(block.props.url || "");

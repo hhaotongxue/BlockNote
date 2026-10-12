@@ -5,6 +5,8 @@ import {
   FormattingToolbarController,
   blockTypeSelectItems,
   useComponentsContext,
+  useBlockNoteEditor,
+  useEditorState,
 } from "@blocknote/react";
 import type { ComponentProps } from "@blocknote/react";
 import { zh } from "@blocknote/core/locales";
@@ -80,6 +82,19 @@ const selectItems = blockTypeSelectItems(zh)
 
 function Toolbar() {
   const components = useComponentsContext()!;
+  const editor = useBlockNoteEditor();
+  const mediaCardSelected = useEditorState({
+    editor,
+    selector: ({ editor }) => {
+      const selected = editor.getSelection()?.blocks || [
+        editor.getTextCursorPosition().block,
+      ];
+      return (
+        selected.length === 1 &&
+        ["aiImage", "aiVideo"].includes(selected[0].type)
+      );
+    },
+  });
   const themed = useMemo(() => {
     const OriginalButton = components.FormattingToolbar.Button;
     const OriginalRoot = components.FormattingToolbar.Root;
@@ -163,6 +178,9 @@ function Toolbar() {
       },
     };
   }, [components]);
+  if (mediaCardSelected) {
+    return null;
+  }
   return (
     <ComponentsContext.Provider value={themed}>
       <FormattingToolbar blockTypeSelectItems={selectItems} />

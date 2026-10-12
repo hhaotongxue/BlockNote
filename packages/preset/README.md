@@ -43,3 +43,7 @@ corepack pnpm@11.8.0 exec vp run --filter @blocknote/core --filter @blocknote/re
 炼书的 `DocumentCard` 是原生文档适配器：交付使用只读裁剪预览并由业务外壳显示标题；闪念使用不带标题的只读/可编辑模式。
 
 卡片仅在实际溢出的方向显示渐隐，滚到底部后底部渐隐消失。`scrollable={false}` 固定为顶部预览，保留溢出渐隐提示；标题和打开完整文档的行为仍由宿主提供。
+
+### Media card slots
+
+`mediaRuntime.renderMediaToolbar(context)` and `renderMediaPanel(context)` provide host-owned content. The preset owns the themed floating containers, their positioning, dismissal, and the card surface. The lower slot appears only with AI enabled. Context exposes `values`, `update`, `upload`, `remove`, `close`, `busy`, and `resolvedUrl`. Model services and generation are supplied by the host; the editor does not load model catalogs. Use `notifyError` for transient host notifications. No task errors are rendered or replayed in the card.

@@ -19,7 +19,8 @@ export {
 export { CardEditorView } from "./CardEditorView.js";
 export type {
   MediaCardKind,
-  MediaCardModel,
+  MediaCardValues,
+  MediaCardSlotContext,
   MediaCardRuntime,
   MediaCardTask,
 } from "./MediaCard.js";

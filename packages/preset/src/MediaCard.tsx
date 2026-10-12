@@ -82,6 +82,9 @@ function MediaCard({
   const toolbar = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   const [panelOpen, setPanelOpen] = useState(false);
+  const [nearViewport, setNearViewport] = useState(
+    () => typeof IntersectionObserver === "undefined",
+  );
   const [hovered, setHovered] = useState(false);
   const [resolvedMedia, setResolvedMedia] = useState({ source: "", url: "" });
   const url = resolvedMedia.source === props.url ? resolvedMedia.url : "";
@@ -111,13 +114,48 @@ function MediaCard({
   const update = (patch: Partial<MediaCardValues>) =>
     editor.updateBlock(block.id, { props: patch });
 
-  useEffect(
-    () => runtime?.subscribe(() => refresh((value) => value + 1)),
-    [runtime],
-  );
+  // Defer native file reads as well as browser image loading for offscreen cards.
+  useEffect(() => {
+    const element = card.current;
+    if (!element) {
+      return;
+    }
+    if (typeof IntersectionObserver === "undefined") {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setNearViewport(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "600px" },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!runtime || !props.taskId) {
+      return;
+    }
+    function snapshot() {
+      const current = runtime?.task(props.taskId);
+      return [current?.status, current?.description, current?.error];
+    }
+    let previous = snapshot();
+    return runtime.subscribe(() => {
+      const next = snapshot();
+      if (next.some((value, index) => value !== previous[index])) {
+        previous = next;
+        refresh((value) => value + 1);
+      }
+    });
+  }, [runtime, props.taskId]);
   useEffect(() => {
     let active = true;
-    if (props.url) {
+    if (nearViewport && props.url) {
       Promise.resolve(
         editor.resolveFileUrl ? editor.resolveFileUrl(props.url) : props.url,
       )
@@ -135,7 +173,7 @@ function MediaCard({
     return () => {
       active = false;
     };
-  }, [editor, props.url, runtime]);
+  }, [editor, props.url, runtime, nearViewport]);
   useEffect(() => {
     if (!panelOpen) {
       return;
@@ -228,8 +266,16 @@ function MediaCard({
         maxWidth: "100%",
       }}
       contentEditable={false}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => {
+        if (video) {
+          setHovered(true);
+        }
+      }}
+      onMouseLeave={() => {
+        if (video) {
+          setHovered(false);
+        }
+      }}
       onDrop={(event) => {
         if (!editable) {
           return;
@@ -318,6 +364,7 @@ function MediaCard({
                   src={url}
                   alt={props.caption || props.name || "图片"}
                   loading="lazy"
+                  decoding="async"
                   draggable={false}
                   onLoad={(event) =>
                     setDimensions({

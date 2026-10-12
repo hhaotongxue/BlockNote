@@ -252,3 +252,77 @@ it("loads intrinsic image ratios and handles side drops with the native document
     editor.unmount();
   }
 });
+
+it("defers file reads until near the viewport and ignores unrelated task updates", async () => {
+  let intersect: IntersectionObserverCallback | undefined;
+  vi.stubGlobal(
+    "IntersectionObserver",
+    class {
+      constructor(callback: IntersectionObserverCallback) {
+        intersect = callback;
+      }
+      observe() {}
+      disconnect() {}
+    },
+  );
+  let notify = () => {};
+  let status = "running";
+  const renderPanel = vi.fn(() => null);
+  const resolveFileUrl = vi.fn(async () => "blob:preview");
+  const editor = BlockNoteEditor.create({
+    schema: BlockNoteSchema.create({
+      blockSpecs: {
+        aiImage: createMediaCardSpec("aiImage", {
+          task: () => ({ status }),
+          subscribe: (listener) => {
+            notify = listener;
+            return () => {};
+          },
+          cancel: () => {},
+          renderMediaPanel: renderPanel,
+        }),
+      },
+    }),
+    resolveFileUrl,
+    initialContent: [
+      { type: "aiImage", props: { url: "large.png", taskId: "job" } },
+    ],
+  });
+  const host = document.createElement("div");
+  document.body.append(host);
+  const root = createRoot(host);
+  root.render(
+    <MantineProvider>
+      <BlockNoteView editor={editor} />
+    </MantineProvider>,
+  );
+  try {
+    await vi.waitFor(() => expect(intersect).toBeDefined());
+    expect(resolveFileUrl).not.toHaveBeenCalled();
+    intersect!(
+      [{ isIntersecting: true } as IntersectionObserverEntry],
+      {} as IntersectionObserver,
+    );
+    await vi.waitFor(() =>
+      expect(host.querySelector("img")?.getAttribute("src")).toBe(
+        "blob:preview",
+      ),
+    );
+    expect(host.querySelector("img")?.getAttribute("decoding")).toBe("async");
+    const renders = renderPanel.mock.calls.length;
+    notify();
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(renderPanel).toHaveBeenCalledTimes(renders);
+    status = "succeeded";
+    notify();
+    await vi.waitFor(() =>
+      expect(renderPanel.mock.calls.length).toBeGreaterThan(renders),
+    );
+    expect(resolveFileUrl).toHaveBeenCalledTimes(1);
+  } finally {
+    root.unmount();
+    host.remove();
+    editor.unmount();
+    vi.unstubAllGlobals();
+  }
+});

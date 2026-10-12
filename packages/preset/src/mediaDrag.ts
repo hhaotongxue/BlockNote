@@ -149,6 +149,7 @@ export function installMediaDrag<
     const edge = Math.min(72, (rect.bottom - rect.top) / 3);
     const elapsed = Math.min(32, time - drag.lastTime || 16);
     drag.lastTime = time;
+    const previousScrollTop = drag.scroll.scrollTop;
     if (
       drag.x >= rect.left &&
       drag.x <= rect.right &&
@@ -165,7 +166,11 @@ export function installMediaDrag<
         drag.scroll.scrollTop += speed * elapsed * 0.7;
       }
     }
-    locate();
+    // Pointer movement already resolves the drop target in over(). Only scrolling
+    // changes block positions while the pointer is stationary.
+    if (drag.scroll.scrollTop !== previousScrollTop) {
+      locate();
+    }
     drag.frame = requestAnimationFrame(tick);
   }
 

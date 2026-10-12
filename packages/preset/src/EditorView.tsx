@@ -43,26 +43,44 @@ export function EditorView<
     }
   }, [props.editor]);
   useEffect(() => {
+    const root = props.editor.domElement;
+    if (!root) {
+      return;
+    }
+    const reset = () => delete root.dataset.mediaSelectionDismissed;
+    const unsubscribe = props.editor.onSelectionChange(reset);
     function dismissMediaSelection(event: PointerEvent) {
-      const root = props.editor.domElement;
       const target = event.target;
-      if (!root || !(target instanceof Element) || root.contains(target)) {
+      if (!root || !(target instanceof Element)) {
         return;
       }
       if (target.closest(".bn-media-card-panel")) {
         return;
       }
+      if (root.contains(target) && target.closest(".bn-media-card")) {
+        reset();
+        return;
+      }
+      root.dataset.mediaSelectionDismissed = "true";
       if (
+        !root.contains(target) &&
         root.querySelector(
           ".ProseMirror-selectednode .bn-media-card, .bn-media-card.ProseMirror-selectednode",
         )
       ) {
         props.editor.blur();
+        const selection = root.ownerDocument.getSelection();
+        if (selection?.anchorNode && root.contains(selection.anchorNode)) {
+          selection.removeAllRanges();
+        }
       }
     }
     document.addEventListener("pointerdown", dismissMediaSelection, true);
-    return () =>
+    return () => {
       document.removeEventListener("pointerdown", dismissMediaSelection, true);
+      unsubscribe();
+      reset();
+    };
   }, [props.editor]);
   return (
     <BlockNoteView

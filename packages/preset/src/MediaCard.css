@@ -25,14 +25,14 @@
   content: none;
 }
 .bn-media-card[data-selected] .bn-media-card-preview,
-.ProseMirror-focused
+.ProseMirror-focused:not([data-media-selection-dismissed])
   .ProseMirror-selectednode
   > .bn-block-content:is(
     [data-content-type="aiImage"],
     [data-content-type="aiVideo"]
   )
   .bn-media-card-preview,
-.ProseMirror-focused
+.ProseMirror-focused:not([data-media-selection-dismissed])
   .bn-block-content:is(
     [data-content-type="aiImage"],
     [data-content-type="aiVideo"]
@@ -45,6 +45,13 @@
   display: block;
   width: 100%;
   height: auto;
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* WebKit can paint a native range over an image independently of NodeSelection. */
+.bn-media-card-preview::selection,
+.bn-media-card-preview *::selection {
+  background: transparent;
 }
 .bn-media-card-placeholder {
   position: absolute;

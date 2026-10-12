@@ -199,6 +199,11 @@ it("loads intrinsic image ratios and handles side drops with the native document
         false,
       ),
     );
+    expect(editor.domElement?.dataset.mediaSelectionDismissed).toBe("true");
+    editor.focus();
+    expect(editor.domElement?.dataset.mediaSelectionDismissed).toBe("true");
+    source.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+    expect(editor.domElement?.dataset.mediaSelectionDismissed).toBeUndefined();
     outside.remove();
     const outer = target.closest<HTMLElement>(".bn-block-outer")!;
     vi.spyOn(outer, "getBoundingClientRect").mockReturnValue({

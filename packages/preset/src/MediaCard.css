@@ -38,7 +38,7 @@
     [data-content-type="aiVideo"]
   ).ProseMirror-selectednode
   .bn-media-card-preview {
-  outline: 1px solid var(--bn-colors-highlights-blue-text);
+  outline: 1px solid var(--bn-media-selection-color, #38bdf8);
   outline-offset: 2px;
 }
 .bn-media-card-preview > :is(img, video) {

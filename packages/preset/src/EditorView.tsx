@@ -1,4 +1,4 @@
-import { useEffect, type ComponentProps } from "react";
+import { useEffect, type ComponentProps, type CSSProperties } from "react";
 import type {
   BlockSchema,
   InlineContentSchema,
@@ -22,8 +22,19 @@ export function EditorView<
 >({
   children,
   onClickCapture,
+  selectionColor = "#38bdf8",
+  style,
   ...props
-}: ComponentProps<typeof BlockNoteView<B, I, S>>) {
+}: ComponentProps<typeof BlockNoteView<B, I, S>> & {
+  /** Media selection outline color. Accepts a CSS color or host CSS variable. */
+  selectionColor?: string;
+}) {
+  const selectionStyle: CSSProperties & {
+    "--bn-media-selection-color": string;
+  } = {
+    ...style,
+    "--bn-media-selection-color": selectionColor,
+  };
   useCreationPolicy(props.editor);
   useEffect(() => {
     const root = props.editor.domElement;
@@ -56,6 +67,7 @@ export function EditorView<
   return (
     <BlockNoteView
       {...props}
+      style={selectionStyle}
       sideMenu={false}
       slashMenu={false}
       formattingToolbar={false}

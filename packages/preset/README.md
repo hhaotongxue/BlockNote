@@ -11,6 +11,8 @@ import "@blocknote/preset/style.css";
 
 `EditorView` 自动安装菜单、工具栏、Lucide 图标、侧边按钮定位、勾选动画和禁止新建折叠块策略；原有折叠块仍可展示、编辑和撤销恢复。children 用于文档引用菜单等业务扩展。
 
+媒体卡片选中边框通过 `selectionColor` 传入，默认亮蓝色 `#38bdf8`；宿主可传 `selectionColor="var(--color-primary)"` 复用自身主题色，不影响正文文字高亮。
+
 需要完整文档页面时，引用 `@blocknote/preset/page.module.less` 的页面类，并在外层加 `bn-preset-page` 和 `data-theme="light"` / `"dark"`。标题使用 `lianshu-blocknote-title` 类。名称保留是为了迁移时不改变现有 DOM。所有宽度、对齐与主题样式都在本仓库维护。
 
 安装本 fork 同版本的 core/react/mantine/preset，以及 React、ReactDOM、Mantine 8/9 和 Less。工作区开发可将四包统一 alias 到源码；发布用 pnpm pack（workspace 依赖会转换版本），将四包一起发布到自己的 registry，固定版本。不要仅安装 npm 上游同名包。

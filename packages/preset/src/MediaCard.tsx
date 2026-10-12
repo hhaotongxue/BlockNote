@@ -341,62 +341,94 @@ function MediaCard({
         middlewares={{ flip: false, shift: true }}
       >
         <Popover.Target>
-          <div
-            className="bn-media-card-preview"
-            data-busy={busy || uploading || undefined}
-            data-motion={motionVisible || undefined}
-            data-ready={(loaded && dimensions.width > 0) || undefined}
-            aria-busy={Boolean(busy || uploading)}
-            style={{
-              aspectRatio: url ? undefined : String(ratio),
-            }}
-          >
-            {url ? (
-              video ? (
-                <video
-                  src={url}
-                  controls={hovered || panelOpen}
-                  preload="metadata"
-                  onLoadedMetadata={(event) =>
-                    setDimensions({
-                      source: url,
-                      width: event.currentTarget.videoWidth,
-                      height: event.currentTarget.videoHeight,
-                    })
-                  }
-                  onClick={() => setHovered(true)}
-                />
+          <div className="bn-media-card-frame">
+            <div
+              className="bn-media-card-preview"
+              data-busy={busy || uploading || undefined}
+              data-motion={motionVisible || undefined}
+              data-ready={(loaded && dimensions.width > 0) || undefined}
+              aria-busy={Boolean(busy || uploading)}
+              style={{
+                aspectRatio: url ? undefined : String(ratio),
+              }}
+            >
+              {url ? (
+                video ? (
+                  <video
+                    src={url}
+                    controls={hovered || panelOpen}
+                    preload="metadata"
+                    onLoadedMetadata={(event) =>
+                      setDimensions({
+                        source: url,
+                        width: event.currentTarget.videoWidth,
+                        height: event.currentTarget.videoHeight,
+                      })
+                    }
+                    onClick={() => setHovered(true)}
+                  />
+                ) : (
+                  <img
+                    src={url}
+                    alt={props.caption || props.name || "图片"}
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                    onLoad={(event) =>
+                      setDimensions({
+                        source: url,
+                        width: event.currentTarget.naturalWidth,
+                        height: event.currentTarget.naturalHeight,
+                      })
+                    }
+                  />
+                )
               ) : (
-                <img
-                  src={url}
-                  alt={props.caption || props.name || "图片"}
-                  loading="lazy"
-                  decoding="async"
-                  draggable={false}
-                  onLoad={(event) =>
-                    setDimensions({
-                      source: url,
-                      width: event.currentTarget.naturalWidth,
-                      height: event.currentTarget.naturalHeight,
-                    })
-                  }
-                />
-              )
-            ) : (
-              !(busy || uploading) && (
-                <span
-                  className="bn-media-card-placeholder"
-                  role="img"
-                  aria-label={video ? "视频卡片" : "图片卡片"}
+                !(busy || uploading) && (
+                  <span
+                    className="bn-media-card-placeholder"
+                    role="img"
+                    aria-label={video ? "视频卡片" : "图片卡片"}
+                  >
+                    {video ? (
+                      <Video size={28} strokeWidth={1.5} />
+                    ) : (
+                      <Image size={28} strokeWidth={1.5} />
+                    )}
+                  </span>
+                )
+              )}
+              {editable && (
+                <button
+                  type="button"
+                  className="bn-media-card-trigger"
+                  onClick={() => setPanelOpen((value) => !value)}
+                  aria-label={video ? "视频设置" : "图片设置"}
+                  aria-expanded={panelOpen}
+                  aria-haspopup="dialog"
                 >
-                  {video ? (
-                    <Video size={28} strokeWidth={1.5} />
-                  ) : (
-                    <Image size={28} strokeWidth={1.5} />
-                  )}
-                </span>
-              )
-            )}
+                  <SlidersHorizontal size={17} />
+                </button>
+              )}
+              {(busy || uploading) && (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="bn-media-card-status"
+                >
+                  <Shell size={30} strokeWidth={1.5} aria-hidden="true" />
+                  <span>
+                    {uploading
+                      ? "正在上传…"
+                      : task?.status === "queued"
+                        ? "等待生成…"
+                        : video
+                          ? "正在生成视频"
+                          : "正在生成图片"}
+                  </span>
+                </div>
+              )}
+            </div>
             {editable && (
               <button
                 type="button"
@@ -475,43 +507,13 @@ function MediaCard({
                   aria-hidden="true"
                 >
                   <path
-                    d="M4 12L12 4M8 12L12 8M12 12H12.01"
+                    d="M3 13H13V3"
                     stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
+                    strokeWidth="2"
+                    strokeLinecap="square"
                   />
                 </svg>
               </button>
-            )}
-            {editable && (
-              <button
-                type="button"
-                className="bn-media-card-trigger"
-                onClick={() => setPanelOpen((value) => !value)}
-                aria-label={video ? "视频设置" : "图片设置"}
-                aria-expanded={panelOpen}
-                aria-haspopup="dialog"
-              >
-                <SlidersHorizontal size={17} />
-              </button>
-            )}
-            {(busy || uploading) && (
-              <div
-                role="status"
-                aria-live="polite"
-                className="bn-media-card-status"
-              >
-                <Shell size={30} strokeWidth={1.5} aria-hidden="true" />
-                <span>
-                  {uploading
-                    ? "正在上传…"
-                    : task?.status === "queued"
-                      ? "等待生成…"
-                      : video
-                        ? "正在生成视频"
-                        : "正在生成图片"}
-                </span>
-              </div>
             )}
           </div>
         </Popover.Target>

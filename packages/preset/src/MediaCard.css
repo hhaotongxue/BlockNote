@@ -3,6 +3,9 @@
   width: 100%;
   color: var(--bn-colors-editor-text);
 }
+.bn-media-card-frame {
+  position: relative;
+}
 .bn-media-card-preview {
   position: relative;
   overflow: hidden;
@@ -267,17 +270,17 @@
 }
 .bn-media-resize {
   position: absolute;
-  right: 6px;
-  bottom: 6px;
+  right: -12px;
+  bottom: -12px;
   display: grid;
   place-items: center;
   width: 24px;
   height: 24px;
   padding: 0;
   border: 0;
-  border-radius: 4px;
-  background: rgb(0 0 0 / 40%);
-  color: white;
+  border-radius: 0;
+  background: transparent;
+  color: var(--bn-colors-side-menu);
   opacity: 0;
   cursor: nwse-resize;
   touch-action: none;

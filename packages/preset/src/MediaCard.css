@@ -107,69 +107,53 @@
   font-size: 13px;
   pointer-events: none;
 }
+@property --bn-media-generation-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
 .bn-media-card-status svg {
-  color: var(--bn-colors-highlights-blue-text, #38bdf8);
-  animation: bn-media-breathe 3s ease-in-out infinite;
+  color: var(--bn-media-selection-color, var(--color-primary, #38bdf8));
 }
 .bn-media-card-preview[data-busy]::after {
   content: "";
   position: absolute;
   inset: 0;
-  border: 1px solid var(--bn-colors-highlights-blue-text, #38bdf8);
+  padding: 2.5px;
   border-radius: inherit;
   pointer-events: none;
-  animation: bn-media-border 3s ease-in-out infinite;
-}
-.bn-media-card-status::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    110deg,
-    transparent 35%,
-    rgb(128 200 220 / 5%) 50%,
-    transparent 65%
+  --bn-media-generation-color: var(
+    --bn-media-selection-color,
+    var(--color-primary, #38bdf8)
   );
-  transform: translateX(-100%);
-  animation: bn-media-sweep 6s ease-in-out infinite;
-  pointer-events: none;
+  background: conic-gradient(
+    from var(--bn-media-generation-angle),
+    transparent 0deg 250deg,
+    color-mix(in srgb, var(--bn-media-generation-color) 25%, transparent) 280deg,
+    var(--bn-media-generation-color) 320deg,
+    white 338deg,
+    var(--bn-media-generation-color) 346deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: bn-media-border-run 2.4s linear infinite;
 }
 .bn-media-card-preview[data-ready]:not([data-busy]) > :is(img, video) {
   animation: bn-media-reveal 240ms ease-out;
 }
-.bn-media-card-preview:not([data-motion]) .bn-media-card-status svg,
-.bn-media-card-preview:not([data-motion]) .bn-media-card-status::before,
 .bn-media-card-preview:not([data-motion])::after {
   animation-play-state: paused;
 }
-@keyframes bn-media-breathe {
-  0%,
-  100% {
-    opacity: 0.55;
-    transform: scale(0.97);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-@keyframes bn-media-border {
-  0%,
-  100% {
-    opacity: 0.15;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-@keyframes bn-media-sweep {
-  0%,
-  20% {
-    transform: translateX(-100%);
-  }
-  80%,
-  100% {
-    transform: translateX(100%);
+@keyframes bn-media-border-run {
+  to {
+    --bn-media-generation-angle: 360deg;
   }
 }
 @keyframes bn-media-reveal {
@@ -181,17 +165,12 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .bn-media-card-status svg,
-  .bn-media-card-status::before,
   .bn-media-card-preview[data-busy]::after,
   .bn-media-card-preview[data-ready]:not([data-busy]) > :is(img, video) {
     animation: none;
   }
   .bn-media-card-preview[data-busy]::after {
-    opacity: 0.25;
-  }
-  .bn-media-card-status::before {
-    display: none;
+    background: var(--bn-media-generation-color);
   }
 }
 .bn-media-card-caption {

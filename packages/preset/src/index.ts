@@ -17,3 +17,9 @@ export {
 } from "./DocumentActionItems.js";
 
 export { CardEditorView } from "./CardEditorView.js";
+export type {
+  MediaCardKind,
+  MediaCardModel,
+  MediaCardRuntime,
+  MediaCardTask,
+} from "./MediaCard.js";

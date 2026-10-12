@@ -9,7 +9,10 @@ import type {
   DefaultReactSuggestionItem,
   SuggestionMenuProps,
 } from "@blocknote/react";
-import { filterSuggestionItems } from "@blocknote/core/extensions";
+import {
+  filterSuggestionItems,
+  insertOrUpdateBlockForSlashMenu,
+} from "@blocknote/core/extensions";
 import {
   Image,
   Table2,
@@ -84,6 +87,8 @@ const commandIcons: Record<string, LucideIcon> = {
   table: Table2,
   file: FileText,
   video: Video,
+  aiImage: Image,
+  aiVideo: Video,
   audio: AudioLines,
   emoji: Smile,
   toggle_heading: Heading1,
@@ -258,7 +263,25 @@ export function BlockNoteCommandMenu() {
               },
             };
           });
-        const order = [...formatKeys, ...basicKeys];
+        for (const type of ["aiImage", "aiVideo"] as const) {
+          if (!(type in editor.schema.blockSchema)) {
+            continue;
+          }
+          commands.push({
+            title: type === "aiImage" ? "图片卡片" : "视频卡片",
+            subtext: "上传素材或使用 AI 创作",
+            aliases: [type, "AI", type === "aiImage" ? "图片卡片" : "视频卡片"],
+            commandKey: type,
+            section: "基础",
+            onItemClick: () => {
+              insertOrUpdateBlockForSlashMenu(editor, {
+                type,
+                props: { aiEnabled: true },
+              } as any);
+            },
+          });
+        }
+        const order = [...formatKeys, ...basicKeys, "aiImage", "aiVideo"];
         commands.sort(
           (a, b) =>
             (order.includes(a.commandKey) ? order.indexOf(a.commandKey) : 100) -

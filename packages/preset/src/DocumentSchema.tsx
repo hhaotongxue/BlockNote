@@ -12,8 +12,10 @@ import {
   createReactInlineMathSpec,
 } from "@blocknote/math-block";
 import { createPresetCodeBlockSpec } from "./CodeBlock.js";
+import { createMediaCardSpec, type MediaCardRuntime } from "./MediaCard.js";
 
 export interface DocumentReferenceOptions {
+  media?: MediaCardRuntime;
   resolveDocument?: (
     id: string,
   ) => { title?: string; icon?: string | null } | undefined;
@@ -25,6 +27,8 @@ export function createDocumentSchema(options: DocumentReferenceOptions = {}) {
   return BlockNoteSchema.create({
     blockSpecs: {
       ...defaultBlockSpecs,
+      aiImage: createMediaCardSpec("aiImage", options.media),
+      aiVideo: createMediaCardSpec("aiVideo", options.media),
       codeBlock: createPresetCodeBlockSpec(),
       mathBlock: createReactMathBlockSpec(),
       bookmark: createReactBlockSpec(

@@ -514,8 +514,20 @@ on touch devices (e.g. the mobile formatting toolbar). */
   background-color: transparent;
 }
 
-.bn-side-menu .mantine-UnstyledButton-root:hover {
-  background-color: var(--bn-colors-hovered-background);
+.bn-side-menu .mantine-UnstyledButton-root:not(.mantine-Menu-item):hover {
+  background-color: var(
+    --bn-preset-button-hover,
+    var(--bn-colors-hovered-background)
+  );
+}
+
+.bn-side-menu
+  .mantine-UnstyledButton-root:not(.mantine-Menu-item):is(
+    :active,
+    [data-expanded="true"],
+    [aria-expanded="true"]
+  ) {
+  background-color: var(--bg-active, var(--bn-colors-selected-background));
 }
 
 .bn-side-menu .mantine-UnstyledButton-root:not(.mantine-Menu-item) svg {

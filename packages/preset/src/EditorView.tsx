@@ -12,7 +12,7 @@ import { BlockNoteFormattingToolbar } from "./BlockNoteFormattingToolbar.js";
 import { taskCheckFeedback } from "./taskCheckFeedback.js";
 import { useCreationPolicy } from "./useCreationPolicy.js";
 
-import { installMediaDrag } from "./mediaLayout.js";
+import { installMediaDrag } from "./mediaDrag.js";
 
 /** Shared visual preset. Consumers supply document, persistence and business UI only. */
 export function EditorView<

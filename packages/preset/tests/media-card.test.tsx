@@ -139,6 +139,22 @@ it("loads intrinsic image ratios and handles side drops with the native document
     ],
   });
   const host = document.createElement("div");
+  host.style.overflowY = "auto";
+  Object.defineProperties(host, {
+    scrollHeight: { value: 2000 },
+    clientHeight: { value: 400 },
+  });
+  vi.spyOn(host, "getBoundingClientRect").mockReturnValue({
+    left: 0,
+    top: 0,
+    width: 800,
+    height: 400,
+    right: 800,
+    bottom: 400,
+    x: 0,
+    y: 0,
+    toJSON() {},
+  });
   document.body.append(host);
   const root = createRoot(host);
   root.render(
@@ -180,27 +196,44 @@ it("loads intrinsic image ratios and handles side drops with the native document
     const dataTransfer = {
       files: [],
       types: ["application/x-blocknote-media"],
+      setDragImage: vi.fn(),
       setData: vi.fn(),
       effectAllowed: "",
       dropEffect: "",
     };
-    function drag(type: string, node: Element) {
+    function drag(type: string, node: Element, x = 10, y = 200) {
       const event = new MouseEvent(type, {
         bubbles: true,
         cancelable: true,
-        clientX: 10,
-        clientY: 200,
+        clientX: x,
+        clientY: y,
       });
       Object.defineProperty(event, "dataTransfer", { value: dataTransfer });
       node.dispatchEvent(event);
     }
+    const beforeDrag = editor.document;
     drag("dragstart", source);
+    expect(dataTransfer.setDragImage).not.toHaveBeenCalled();
+    // Native OS dragging can blur the webview; this is not a cancellation.
+    window.dispatchEvent(new Event("blur"));
+    expect(document.querySelector(".bn-media-drop-indicator")).not.toBeNull();
+    expect(host.contains(source)).toBe(true);
     drag("dragover", target);
     expect(
       document.querySelector<HTMLElement>(".bn-media-drop-indicator")?.dataset
         .side,
     ).toBe("left");
+    const indicator = document.querySelector(".bn-media-drop-indicator");
+    drag("dragover", editor.domElement!, 610, 200);
+    expect(document.querySelector(".bn-media-drop-indicator")).toBe(indicator);
+    expect((indicator as HTMLElement).dataset.side).toBe("right");
+    expect(editor.document).toEqual(beforeDrag);
+    drag("dragover", target, 400, 390);
+    await vi.waitFor(() => expect(host.scrollTop).toBeGreaterThan(0));
+    drag("dragover", target);
     drag("drop", target);
+    expect(document.querySelector(".bn-media-drag-thumbnail")).toBeNull();
+    expect(document.querySelector(".bn-media-drop-indicator")).toBeNull();
     expect(editor.document[0].type).toBe("mediaRow");
     expect(editor.document[0].children.map((block) => block.id)).toEqual([
       "portrait",

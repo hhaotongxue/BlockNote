@@ -1,6 +1,12 @@
 import { SideMenuExtension } from "@blocknote/core/extensions";
 import { SideMenuController, useExtensionState } from "@blocknote/react";
 
+/** Shared with the media drop indicator in MediaCard.css. */
+export const blockDropCursor = {
+  width: 3,
+  color: "var(--color-primary, #38bdf8)",
+};
+
 type FloatingOptions = NonNullable<
   Parameters<typeof SideMenuController>[0]["floatingUIOptions"]
 >;

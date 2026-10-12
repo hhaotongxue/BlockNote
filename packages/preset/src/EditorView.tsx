@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import { useEffect, type ComponentProps } from "react";
 import type {
   BlockSchema,
   InlineContentSchema,
@@ -12,6 +12,8 @@ import { BlockNoteFormattingToolbar } from "./BlockNoteFormattingToolbar.js";
 import { taskCheckFeedback } from "./taskCheckFeedback.js";
 import { useCreationPolicy } from "./useCreationPolicy.js";
 
+import { installMediaDrag } from "./mediaLayout.js";
+
 /** Shared visual preset. Consumers supply document, persistence and business UI only. */
 export function EditorView<
   B extends BlockSchema,
@@ -23,6 +25,12 @@ export function EditorView<
   ...props
 }: ComponentProps<typeof BlockNoteView<B, I, S>>) {
   useCreationPolicy(props.editor);
+  useEffect(() => {
+    const root = props.editor.domElement;
+    if (root) {
+      return installMediaDrag(props.editor, root);
+    }
+  }, [props.editor]);
   return (
     <BlockNoteView
       {...props}

@@ -7,6 +7,7 @@ export default defineConfig({
     include: [
       "packages/preset/tests/code-block.test.ts",
       "packages/preset/tests/media-card.test.tsx",
+      "packages/preset/tests/media-layout.test.tsx",
     ],
   },
 });

@@ -3,7 +3,11 @@ import { afterEach, expect, it, vi } from "vite-plus/test";
 import { createRoot } from "react-dom/client";
 import { MantineProvider } from "@mantine/core";
 import { BlockNoteView } from "@blocknote/mantine";
-import { BlockNoteEditor, BlockNoteSchema } from "@blocknote/core";
+import {
+  BlockNoteEditor,
+  BlockNoteSchema,
+  defaultBlockSpecs,
+} from "@blocknote/core";
 import { createMediaCardSpec } from "../src/MediaCard.js";
 
 Object.defineProperty(window, "matchMedia", {
@@ -113,3 +117,105 @@ it.each(["aiImage", "aiVideo"] as const)(
     }
   },
 );
+
+it("loads intrinsic image ratios and handles side drops with the native document structure", async () => {
+  const { createMediaRowSpec } = await import("../src/MediaRow.js");
+  const { EditorView } = await import("../src/EditorView.js");
+  const editor = BlockNoteEditor.create({
+    schema: BlockNoteSchema.create({
+      blockSpecs: {
+        ...defaultBlockSpecs,
+        aiImage: createMediaCardSpec("aiImage"),
+        mediaRow: createMediaRowSpec(),
+      },
+    }),
+    initialContent: [
+      {
+        id: "portrait",
+        type: "aiImage",
+        props: { url: "portrait.jpg", aspectRatio: "16:9" },
+      },
+      { id: "landscape", type: "aiImage", props: { url: "landscape.jpg" } },
+    ],
+  });
+  const host = document.createElement("div");
+  document.body.append(host);
+  const root = createRoot(host);
+  root.render(
+    <MantineProvider>
+      <EditorView editor={editor} />
+    </MantineProvider>,
+  );
+  try {
+    await vi.waitFor(() => expect(host.querySelectorAll("img").length).toBe(2));
+    const img = host.querySelector("img")!;
+    Object.defineProperties(img, {
+      naturalWidth: { value: 600 },
+      naturalHeight: { value: 900 },
+    });
+    img.dispatchEvent(new Event("load"));
+    await vi.waitFor(() =>
+      expect(
+        host.querySelector('[data-block-id="portrait"] style')?.textContent,
+      ).toContain(`--bn-media-ratio: ${2 / 3}`),
+    );
+    expect(img.parentElement?.style.aspectRatio).toBe("");
+    expect(img.closest<HTMLElement>(".bn-media-card")?.style.width).toBe(
+      "100%",
+    );
+    const source = host.querySelector('[data-block-id="portrait"]')!;
+    const target = host.querySelector('[data-block-id="landscape"]')!;
+    const outer = target.closest<HTMLElement>(".bn-block-outer")!;
+    vi.spyOn(outer, "getBoundingClientRect").mockReturnValue({
+      left: 0,
+      top: 0,
+      width: 600,
+      height: 400,
+      right: 600,
+      bottom: 400,
+      x: 0,
+      y: 0,
+      toJSON() {},
+    });
+    const dataTransfer = {
+      files: [],
+      types: ["application/x-blocknote-media"],
+      setData: vi.fn(),
+      effectAllowed: "",
+      dropEffect: "",
+    };
+    function drag(type: string, node: Element) {
+      const event = new MouseEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 200,
+      });
+      Object.defineProperty(event, "dataTransfer", { value: dataTransfer });
+      node.dispatchEvent(event);
+    }
+    drag("dragstart", source);
+    drag("dragover", target);
+    expect(
+      document.querySelector<HTMLElement>(".bn-media-drop-indicator")?.dataset
+        .side,
+    ).toBe("left");
+    drag("drop", target);
+    expect(editor.document[0].type).toBe("mediaRow");
+    expect(editor.document[0].children.map((block) => block.id)).toEqual([
+      "portrait",
+      "landscape",
+    ]);
+    await vi.waitFor(() =>
+      expect(
+        host.querySelector(
+          '.bn-block:has(> .bn-react-node-view-renderer > [data-content-type="mediaRow"]) > .bn-block-group',
+        ),
+      ).not.toBeNull(),
+    );
+  } finally {
+    root.unmount();
+    host.remove();
+    editor.unmount();
+  }
+});

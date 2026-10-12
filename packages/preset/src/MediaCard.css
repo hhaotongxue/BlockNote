@@ -17,8 +17,7 @@
 .bn-media-card-preview > :is(img, video) {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: auto;
 }
 .bn-media-card-placeholder {
   position: absolute;
@@ -104,4 +103,68 @@
   .bn-media-card .bn-media-card-trigger {
     transition: none;
   }
+}
+
+/* A media row uses native children, without native nested-list indentation. */
+.bn-block:has(> .bn-react-node-view-renderer > [data-content-type="mediaRow"])
+  > .bn-react-node-view-renderer {
+  display: none;
+}
+.bn-block:has(> .bn-react-node-view-renderer > [data-content-type="mediaRow"])
+  > .bn-block-group {
+  display: flex;
+  gap: 12px;
+  margin: 3px 0;
+  align-items: flex-start;
+}
+.bn-block:has(> .bn-react-node-view-renderer > [data-content-type="mediaRow"])
+  > .bn-block-group
+  > .bn-block-outer {
+  flex: var(--bn-media-ratio, 1) 1 0%;
+  min-width: 0;
+  margin: 0;
+}
+.bn-block:has(> .bn-react-node-view-renderer > [data-content-type="mediaRow"])
+  > .bn-block-group
+  > .bn-block-outer::before {
+  display: none;
+}
+.bn-block:has(> .bn-react-node-view-renderer > [data-content-type="mediaRow"])
+  > .bn-block-group
+  .bn-media-card {
+  min-width: 100%;
+}
+.bn-block:has(> .bn-react-node-view-renderer > [data-content-type="mediaRow"])
+  > .bn-block-group
+  .bn-media-resize {
+  display: none;
+}
+.bn-media-resize {
+  position: absolute;
+  top: calc(50% - 18px);
+  width: 8px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 80%);
+  border-radius: 4px;
+  background: rgb(0 0 0 / 40%);
+  opacity: 0;
+  cursor: ew-resize;
+  touch-action: none;
+}
+.bn-media-resize-left {
+  left: 4px;
+}
+.bn-media-resize-right {
+  right: 4px;
+}
+.bn-media-card:is(:hover, :focus-within) .bn-media-resize {
+  opacity: 1;
+}
+.bn-media-drop-indicator {
+  position: fixed;
+  z-index: 1000;
+  background: var(--bn-colors-highlights-blue-text, #38bdf8);
+  border-radius: 2px;
+  pointer-events: none;
 }

@@ -14,6 +14,8 @@ import {
 import { createPresetCodeBlockSpec } from "./CodeBlock.js";
 import { createMediaCardSpec, type MediaCardRuntime } from "./MediaCard.js";
 
+import { createMediaRowSpec } from "./MediaRow.js";
+
 export interface DocumentReferenceOptions {
   media?: MediaCardRuntime;
   resolveDocument?: (
@@ -27,6 +29,7 @@ export function createDocumentSchema(options: DocumentReferenceOptions = {}) {
   return BlockNoteSchema.create({
     blockSpecs: {
       ...defaultBlockSpecs,
+      mediaRow: createMediaRowSpec(),
       aiImage: createMediaCardSpec("aiImage", options.media),
       aiVideo: createMediaCardSpec("aiVideo", options.media),
       codeBlock: createPresetCodeBlockSpec(),

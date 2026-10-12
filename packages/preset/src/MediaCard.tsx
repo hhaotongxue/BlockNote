@@ -7,6 +7,8 @@ import {
 } from "@blocknote/react";
 import { Image, Video, SlidersHorizontal } from "lucide-react";
 
+import { mediaRatio, removeMediaCard } from "./mediaLayout.js";
+
 export type MediaCardKind = "aiImage" | "aiVideo";
 export interface MediaCardTask {
   status: string;
@@ -24,6 +26,7 @@ export interface MediaCardValues {
   resolution: string;
   duration: number;
   taskId: string;
+  previewWidth: number;
 }
 /** Slot content is owned by the host. The editor owns the floating containers. */
 export interface MediaCardSlotContext {
@@ -59,6 +62,7 @@ export const mediaCardProps = {
   resolution: { default: "" },
   duration: { default: 5 },
   taskId: { default: "" },
+  previewWidth: { default: 0 },
 } as const;
 
 function MediaCard({
@@ -81,6 +85,24 @@ function MediaCard({
   const [hovered, setHovered] = useState(false);
   const [resolvedMedia, setResolvedMedia] = useState({ source: "", url: "" });
   const url = resolvedMedia.source === props.url ? resolvedMedia.url : "";
+  const [dimensions, setDimensions] = useState({
+    source: "",
+    width: 0,
+    height: 0,
+  });
+  const [resizeWidth, setResizeWidth] = useState<number | null>(null);
+  const resize = useRef<{
+    x: number;
+    width: number;
+    maximum: number;
+    side: number;
+  } | null>(null);
+  const loaded = dimensions.source === url;
+  const ratio = mediaRatio(
+    loaded ? dimensions.width : 0,
+    loaded ? dimensions.height : 0,
+    props.aspectRatio,
+  );
   const [uploading, setUploading] = useState(false);
   const [, refresh] = useState(0);
   const task = runtime?.task(props.taskId);
@@ -188,7 +210,7 @@ function MediaCard({
       if (props.taskId && busy) {
         runtime?.cancel(props.taskId);
       }
-      editor.removeBlocks([block.id]);
+      removeMediaCard(editor, block.id);
     },
     close: () => setPanelOpen(false),
   };
@@ -198,11 +220,21 @@ function MediaCard({
       ref={card}
       className="bn-media-card"
       data-selected={panelOpen || undefined}
+      data-kind={block.type}
+      data-block-id={block.id}
+      draggable={editable && !video}
+      style={{
+        width: resizeWidth ?? (props.previewWidth || "100%"),
+        maxWidth: "100%",
+      }}
       contentEditable={false}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onDrop={(event) => {
         if (!editable) {
+          return;
+        }
+        if (!event.dataTransfer.files.length) {
           return;
         }
         event.preventDefault();
@@ -215,6 +247,7 @@ function MediaCard({
         }
       }}
     >
+      <style>{`.bn-block-outer[data-id=${JSON.stringify(block.id)}] { --bn-media-ratio: ${ratio}; }`}</style>
       {editable && (
         <Popover
           opened={panelOpen && Boolean(runtime?.renderMediaToolbar)}
@@ -262,7 +295,7 @@ function MediaCard({
           <div
             className="bn-media-card-preview"
             style={{
-              aspectRatio: (props.aspectRatio || "16:9").replace(":", "/"),
+              aspectRatio: url ? undefined : String(ratio),
             }}
           >
             {url ? (
@@ -271,6 +304,13 @@ function MediaCard({
                   src={url}
                   controls={hovered || panelOpen}
                   preload="metadata"
+                  onLoadedMetadata={(event) =>
+                    setDimensions({
+                      source: url,
+                      width: event.currentTarget.videoWidth,
+                      height: event.currentTarget.videoHeight,
+                    })
+                  }
                   onClick={() => setHovered(true)}
                 />
               ) : (
@@ -278,6 +318,14 @@ function MediaCard({
                   src={url}
                   alt={props.caption || props.name || "图片"}
                   loading="lazy"
+                  draggable={false}
+                  onLoad={(event) =>
+                    setDimensions({
+                      source: url,
+                      width: event.currentTarget.naturalWidth,
+                      height: event.currentTarget.naturalHeight,
+                    })
+                  }
                 />
               )
             ) : (
@@ -293,6 +341,90 @@ function MediaCard({
                 )}
               </span>
             )}
+            {editable &&
+              (["left", "right"] as const).map((side) => (
+                <button
+                  key={side}
+                  type="button"
+                  className={`bn-media-resize bn-media-resize-${side}`}
+                  aria-label={
+                    side === "left" ? "从左侧缩放图片" : "从右侧缩放图片"
+                  }
+                  onPointerDown={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const node = card.current;
+                    if (!node) {
+                      return;
+                    }
+                    resize.current = {
+                      x: event.clientX,
+                      width: node.getBoundingClientRect().width,
+                      maximum:
+                        node.parentElement?.clientWidth || node.clientWidth,
+                      side: side === "left" ? -1 : 1,
+                    };
+                    event.currentTarget.setPointerCapture(event.pointerId);
+                  }}
+                  onPointerMove={(event) => {
+                    const initial = resize.current;
+                    if (!initial) {
+                      return;
+                    }
+                    setResizeWidth(
+                      Math.min(
+                        initial.maximum,
+                        Math.max(
+                          64,
+                          initial.width +
+                            (event.clientX - initial.x) * initial.side,
+                        ),
+                      ),
+                    );
+                  }}
+                  onPointerUp={(event) => {
+                    if (!resize.current) {
+                      return;
+                    }
+                    const initial = resize.current;
+                    const width = Math.min(
+                      initial.maximum,
+                      Math.max(
+                        64,
+                        initial.width +
+                          (event.clientX - initial.x) * initial.side,
+                      ),
+                    );
+                    resize.current = null;
+                    setResizeWidth(null);
+                    update({ previewWidth: width });
+                    event.currentTarget.releasePointerCapture(event.pointerId);
+                  }}
+                  onPointerCancel={() => {
+                    resize.current = null;
+                    setResizeWidth(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) {
+                      return;
+                    }
+                    event.preventDefault();
+                    const node = card.current;
+                    if (node) {
+                      update({
+                        previewWidth: Math.min(
+                          node.parentElement?.clientWidth || node.clientWidth,
+                          Math.max(
+                            64,
+                            node.clientWidth +
+                              (event.key === "ArrowRight" ? 16 : -16),
+                          ),
+                        ),
+                      });
+                    }
+                  }}
+                />
+              ))}
             {editable && (
               <button
                 type="button"

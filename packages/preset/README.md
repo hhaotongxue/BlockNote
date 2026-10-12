@@ -47,3 +47,12 @@ corepack pnpm@11.8.0 exec vp run --filter @blocknote/core --filter @blocknote/re
 ### Media card slots
 
 `mediaRuntime.renderMediaToolbar(context)` and `renderMediaPanel(context)` provide host-owned content. The preset owns the themed floating containers, their positioning, dismissal, and the card surface. The lower slot appears only with AI enabled. Context exposes `values`, `update`, `upload`, `remove`, `close`, `busy`, and `resolvedUrl`. Model services and generation are supplied by the host; the editor does not load model catalogs. Use `notifyError` for transient host notifications. No task errors are rendered or replayed in the card.
+
+### 图片尺寸与并排
+
+- `aiImage` / `aiVideo` 有素材时使用素材实际比例；空卡片使用生成比例。
+- `previewWidth: 0` 表示铺满可用宽度；单张卡片两侧手柄修改这个宽度，高度始终随素材比例变化。
+- 拖动图片本身，到另一图片中部的左/右半边可组成 `mediaRow`；顶部/底部为上下插入。蓝色插入线表示落点。
+- `mediaRow` 只保存原图片块的 `children` 顺序。CSS 根据加载的图片宽高比分配 flex 权重，扣除 12px 间距后铺满整行，无裁剪。行内忽略单图手动宽度，拖出后恢复。
+- 移动、成行、拆行通过公开 block API 在同一事务中完成，保留图片 ID 与任务绑定。宿主的 headless schema 需要注册 `mediaRow` 和 `previewWidth`。
+- 这一布局限定为图片行，不引入通用分栏依赖；外部 Markdown/HTML 的默认有损导出仍以独立图片输出。

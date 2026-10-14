@@ -58,7 +58,7 @@ const formatKeys = [
   "quote",
   "code_block",
 ];
-const basicKeys = ["image", "table", "file", "video", "audio"];
+const basicKeys = ["aiImage", "table", "file", "aiVideo", "audio"];
 const labels: Record<string, string> = {
   paragraph: "正文",
   image: "图片",
@@ -229,7 +229,12 @@ export function BlockNoteCommandMenu() {
           .filter((item) => {
             const key =
               "key" in item && typeof item.key === "string" ? item.key : "";
-            return key !== "toggle_list" && !key.startsWith("toggle_heading");
+            return (
+              key !== "image" &&
+              key !== "video" &&
+              key !== "toggle_list" &&
+              !key.startsWith("toggle_heading")
+            );
           })
           .map((item) => {
             const key =
@@ -268,9 +273,14 @@ export function BlockNoteCommandMenu() {
             continue;
           }
           commands.push({
-            title: type === "aiImage" ? "图片卡片" : "视频卡片",
+            title: type === "aiImage" ? "图片" : "视频",
             subtext: "上传素材或使用 AI 创作",
-            aliases: [type, "AI", type === "aiImage" ? "图片卡片" : "视频卡片"],
+            aliases: [
+              type,
+              "AI",
+              type === "aiImage" ? "image" : "video",
+              type === "aiImage" ? "图片卡片" : "视频卡片",
+            ],
             commandKey: type,
             section: "基础",
             onItemClick: () => {
@@ -281,7 +291,7 @@ export function BlockNoteCommandMenu() {
             },
           });
         }
-        const order = [...formatKeys, ...basicKeys, "aiImage", "aiVideo"];
+        const order = [...formatKeys, ...basicKeys];
         commands.sort(
           (a, b) =>
             (order.includes(a.commandKey) ? order.indexOf(a.commandKey) : 100) -

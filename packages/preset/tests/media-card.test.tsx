@@ -22,13 +22,16 @@ Object.defineProperty(window, "matchMedia", {
 afterEach(() => vi.restoreAllMocks());
 
 it.each(["aiImage", "aiVideo"] as const)(
-  "%s opens its settings outside document layout",
+  "%s opens its toolbar on card click and its input only from settings",
   async (kind) => {
     const spec = createMediaCardSpec(kind, {
       renderMediaToolbar: (context) => (
         <>
           <button aria-label="上传素材" onClick={context.upload}>
             Upload
+          </button>
+          <button aria-label="素材说明" onClick={context.editCaption}>
+            Caption
           </button>
           <button
             role="switch"
@@ -59,7 +62,12 @@ it.each(["aiImage", "aiVideo"] as const)(
       initialContent: [
         {
           type: kind,
-          props: { aiEnabled: true, prompt: "Harbour", aspectRatio: "16:9" },
+          props: {
+            aiEnabled: true,
+            prompt: "Harbour",
+            aspectRatio: "16:9",
+            caption: "原说明",
+          },
         },
       ],
     });
@@ -80,6 +88,71 @@ it.each(["aiImage", "aiVideo"] as const)(
       expect(
         host.querySelector(".bn-media-card-placeholder")?.textContent,
       ).toBe("");
+      (host.querySelector(".bn-media-card-preview") as HTMLElement).click();
+      const toolbarSelector =
+        '[aria-label="' + (kind === "aiImage" ? "图片操作" : "视频操作") + '"]';
+      await vi.waitFor(() =>
+        expect(document.querySelector(toolbarSelector)).not.toBeNull(),
+      );
+      (
+        document.querySelector(
+          `${toolbarSelector} [aria-label="素材说明"]`,
+        ) as HTMLButtonElement
+      ).click();
+      await vi.waitFor(() =>
+        expect(document.querySelector(".bn-media-caption-form")).not.toBeNull(),
+      );
+      const captionForm = document.querySelector(
+        ".bn-media-caption-form",
+      ) as HTMLFormElement;
+      expect(host.contains(captionForm)).toBe(false);
+      expect(captionForm.querySelector("input")?.value).toBe("原说明");
+      expect(captionForm.querySelector("textarea")).toBeNull();
+      captionForm
+        .querySelector("input")
+        ?.dispatchEvent(
+          new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+        );
+      await vi.waitFor(() =>
+        expect(document.querySelector(".bn-media-caption-form")).toBeNull(),
+      );
+      expect(editor.document[0].props).toMatchObject({ caption: "原说明" });
+      expect(document.querySelector(toolbarSelector)).not.toBeNull();
+      (
+        document.querySelector(
+          `${toolbarSelector} [aria-label="素材说明"]`,
+        ) as HTMLButtonElement
+      ).click();
+      await vi.waitFor(() =>
+        expect(document.querySelector(".bn-media-caption-form")).not.toBeNull(),
+      );
+      document
+        .querySelector(".bn-media-caption-form input")
+        ?.dispatchEvent(new Event("pointerdown", { bubbles: true }));
+      expect(document.querySelector(".bn-media-caption-form")).not.toBeNull();
+      document.body.dispatchEvent(new Event("pointerdown", { bubbles: true }));
+      await vi.waitFor(() => {
+        expect(document.querySelector(".bn-media-caption-form")).toBeNull();
+        expect(document.querySelector(toolbarSelector)).toBeNull();
+      });
+      (host.querySelector(".bn-media-card-preview") as HTMLElement).click();
+      await vi.waitFor(() =>
+        expect(document.querySelector(toolbarSelector)).not.toBeNull(),
+      );
+      expect(document.querySelector('[role="dialog"]')).toBeNull();
+      (
+        host.querySelector(".bn-media-card-trigger") as HTMLButtonElement
+      ).click();
+      await vi.waitFor(() =>
+        expect(document.querySelector('[role="dialog"]')).not.toBeNull(),
+      );
+      (
+        host.querySelector(".bn-media-card-trigger") as HTMLButtonElement
+      ).click();
+      await vi.waitFor(() =>
+        expect(document.querySelector('[role="dialog"]')).toBeNull(),
+      );
+      expect(document.querySelector(toolbarSelector)).not.toBeNull();
       (
         host.querySelector(".bn-media-card-trigger") as HTMLButtonElement
       ).click();
@@ -108,7 +181,7 @@ it.each(["aiImage", "aiVideo"] as const)(
         toolbar.querySelector('[aria-label="关闭设置"]') as HTMLButtonElement
       ).click();
       await vi.waitFor(() =>
-        expect(document.querySelector('[role="dialog"]')).toBeNull(),
+        expect(document.querySelector(toolbarSelector)).toBeNull(),
       );
     } finally {
       root.unmount();

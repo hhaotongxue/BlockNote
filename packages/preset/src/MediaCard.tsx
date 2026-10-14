@@ -39,6 +39,7 @@ export interface MediaCardSlotContext {
   uploading: boolean;
   update: (patch: Partial<MediaCardValues>) => void;
   upload: () => void;
+  editCaption: () => void;
   remove: () => void;
   close: () => void;
 }
@@ -81,7 +82,11 @@ function MediaCard({
   const card = useRef<HTMLDivElement>(null);
   const toolbar = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLDivElement>(null);
+  const captionPanel = useRef<HTMLDivElement>(null);
+  const [toolbarOpen, setToolbarOpen] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
+  const [captionOpen, setCaptionOpen] = useState(false);
+  const [captionDraft, setCaptionDraft] = useState("");
   const [nearViewport, setNearViewport] = useState(
     () => typeof IntersectionObserver === "undefined",
   );
@@ -178,22 +183,31 @@ function MediaCard({
     };
   }, [editor, props.url, runtime, nearViewport]);
   useEffect(() => {
-    if (!panelOpen) {
+    if (!captionOpen && !toolbarOpen && !panelOpen) {
       return;
     }
     function outside(event: PointerEvent) {
       const target = event.target as Node;
+      if (captionOpen && !captionPanel.current?.contains(target)) {
+        editor.updateBlock(block.id, { props: { caption: captionDraft } });
+        setCaptionOpen(false);
+      }
       if (
-        ![card.current, toolbar.current, panel.current].some((element) =>
-          element?.contains(target),
-        )
+        ![
+          card.current,
+          toolbar.current,
+          panel.current,
+          captionPanel.current,
+        ].some((element) => element?.contains(target))
       ) {
         setPanelOpen(false);
+        setToolbarOpen(false);
       }
     }
     function escape(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setPanelOpen(false);
+        setToolbarOpen(false);
       }
     }
     document.addEventListener("pointerdown", outside, true);
@@ -202,7 +216,7 @@ function MediaCard({
       document.removeEventListener("pointerdown", outside, true);
       document.removeEventListener("keydown", escape);
     };
-  }, [panelOpen]);
+  }, [toolbarOpen, panelOpen, captionOpen, captionDraft, editor, block.id]);
 
   async function upload(file?: File) {
     if (!file || !editable || uploading) {
@@ -247,20 +261,27 @@ function MediaCard({
     uploading,
     update,
     upload: () => fileInput?.click(),
+    editCaption: () => {
+      setCaptionDraft(props.caption);
+      setCaptionOpen(true);
+    },
     remove: () => {
       if (props.taskId && busy) {
         runtime?.cancel(props.taskId);
       }
       removeMediaCard(editor, block.id);
     },
-    close: () => setPanelOpen(false),
+    close: () => {
+      setPanelOpen(false);
+      setToolbarOpen(false);
+    },
   };
   const portalProps = portalElement ? { target: portalElement } : undefined;
   return (
     <div
       ref={card}
       className="bn-media-card"
-      data-selected={panelOpen || undefined}
+      data-selected={toolbarOpen || panelOpen || undefined}
       data-kind={block.type}
       data-block-id={block.id}
       draggable={editable && !video}
@@ -269,6 +290,11 @@ function MediaCard({
         maxWidth: "100%",
       }}
       contentEditable={false}
+      onClick={(event) => {
+        if (editable && card.current?.contains(event.target as Node)) {
+          setToolbarOpen(true);
+        }
+      }}
       onMouseEnter={() => {
         if (video) {
           setHovered(true);
@@ -299,7 +325,7 @@ function MediaCard({
       <style>{`.bn-block-outer[data-id=${JSON.stringify(block.id)}] { --bn-media-ratio: ${ratio}; }`}</style>
       {editable && (
         <Popover
-          opened={panelOpen && Boolean(runtime?.renderMediaToolbar)}
+          opened={toolbarOpen && Boolean(runtime?.renderMediaToolbar)}
           position="top"
           offset={12}
           width="max-content"
@@ -319,7 +345,58 @@ function MediaCard({
             role="toolbar"
             aria-label={video ? "视频操作" : "图片操作"}
           >
-            {runtime?.renderMediaToolbar?.(context)}
+            <Popover
+              opened={captionOpen}
+              onClose={() => {
+                update({ caption: captionDraft });
+                setCaptionOpen(false);
+              }}
+              position="bottom"
+              offset={8}
+              width="target"
+              withinPortal
+              portalProps={portalProps}
+              floatingStrategy="fixed"
+              closeOnClickOutside={false}
+              closeOnEscape={false}
+              middlewares={{ flip: false, shift: true }}
+            >
+              <Popover.Target>
+                <div>{runtime?.renderMediaToolbar?.(context)}</div>
+              </Popover.Target>
+              <Popover.Dropdown
+                ref={captionPanel}
+                className="bn-media-card-panel bn-media-caption-panel"
+                role="dialog"
+                aria-label={video ? "视频说明" : "图片说明"}
+                onPointerDown={(event) => event.stopPropagation()}
+                onKeyDown={(event) => {
+                  event.stopPropagation();
+                  if (event.key === "Escape") {
+                    event.preventDefault();
+                    setCaptionOpen(false);
+                  }
+                }}
+              >
+                <form
+                  className="bn-media-caption-form"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    update({ caption: captionDraft });
+                    setCaptionOpen(false);
+                  }}
+                >
+                  <input
+                    autoFocus
+                    type="text"
+                    aria-label="素材说明内容"
+                    placeholder="添加素材说明…"
+                    value={captionDraft}
+                    onChange={(event) => setCaptionDraft(event.target.value)}
+                  />
+                </form>
+              </Popover.Dropdown>
+            </Popover>
           </Popover.Dropdown>
         </Popover>
       )}
@@ -356,7 +433,7 @@ function MediaCard({
                 video ? (
                   <video
                     src={url}
-                    controls={hovered || panelOpen}
+                    controls={hovered || toolbarOpen || panelOpen}
                     preload="metadata"
                     onLoadedMetadata={(event) =>
                       setDimensions({
@@ -523,12 +600,16 @@ function MediaCard({
           role="dialog"
           aria-label={video ? "视频生成配置" : "图片生成配置"}
         >
-          {runtime?.renderMediaPanel?.(context)}
+          {runtime?.renderMediaPanel?.({
+            ...context,
+            close: () => setPanelOpen(false),
+          })}
         </Popover.Dropdown>
       </Popover>
       {props.caption && (
         <div className="bn-media-card-caption">{props.caption}</div>
       )}
+
       <input
         ref={setFileInput}
         type="file"

@@ -251,7 +251,7 @@
 .bn-block:has(> .bn-react-node-view-renderer > [data-content-type="mediaRow"])
   > .bn-block-group {
   display: flex;
-  gap: var(--bn-block-gap, 12px);
+  gap: var(--bn-card-gap, 12px);
   margin: 0;
   align-items: flex-start;
 }

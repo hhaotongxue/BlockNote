@@ -1,0 +1,44 @@
+/* Card spacing is separate from the core's prose, list and heading rhythm. */
+.bn-container {
+  --bn-card-gap: 12px;
+}
+
+:where(.bn-container)
+  .bn-block-outer:has(
+    > .bn-block
+      > :is(
+        .bn-block-content,
+        .bn-react-node-view-renderer > .bn-block-content
+      ):where(
+        [data-content-type="aiImage"],
+        [data-content-type="aiVideo"],
+        [data-content-type="mediaRow"],
+        [data-content-type="codeBlock"],
+        [data-content-type="bookmark"],
+        [data-content-type="table"],
+        [data-content-type="image"],
+        [data-content-type="video"],
+        [data-content-type="audio"],
+        [data-content-type="file"],
+        [data-content-type="mathBlock"]
+      )
+  ) {
+  margin-block: var(--bn-card-gap);
+}
+
+.bn-container
+  .bn-block-content:where(
+    [data-content-type="aiImage"],
+    [data-content-type="aiVideo"],
+    [data-content-type="mediaRow"],
+    [data-content-type="codeBlock"],
+    [data-content-type="bookmark"],
+    [data-content-type="table"],
+    [data-content-type="image"],
+    [data-content-type="video"],
+    [data-content-type="audio"],
+    [data-content-type="file"],
+    [data-content-type="mathBlock"]
+  ) {
+  padding-block: 0;
+}

@@ -7,6 +7,7 @@
 @import "./CodeBlock.css";
 @import "./CardEditorView.css";
 @import "./MediaCard.css";
+@import "./BlockSpacing.css";
 
 .bn-preset-bookmark {
   width: 100%;

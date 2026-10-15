@@ -19,7 +19,9 @@
     },
     "./document-materials.module.css": "./src/document-materials.module.css",
     "./style.css": "./src/style.css",
-    "./page.module.less": "./src/page.module.less"
+    "./page.module.less": "./src/page.module.less",
+    "./document": "./src/document.ts",
+    "./document-content": "./src/documentContent.ts"
   },
   "scripts": {
     "test": "node --experimental-strip-types --test tests/*.test.mjs",

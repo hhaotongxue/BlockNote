@@ -46,13 +46,13 @@
 /* Replace the native whole-block tint with a focus-aware media-only outline. */
 .ProseMirror-selectednode
   > .bn-block-content:is(
-    [data-content-type="aiImage"],
-    [data-content-type="aiVideo"]
+    [data-content-type="image"],
+    [data-content-type="video"]
   )
   > *::after,
 .bn-block-content:is(
-    [data-content-type="aiImage"],
-    [data-content-type="aiVideo"]
+    [data-content-type="image"],
+    [data-content-type="video"]
   ).ProseMirror-selectednode
   > *::after {
   content: none;
@@ -61,14 +61,14 @@
 .ProseMirror-focused:not([data-media-selection-dismissed])
   .ProseMirror-selectednode
   > .bn-block-content:is(
-    [data-content-type="aiImage"],
-    [data-content-type="aiVideo"]
+    [data-content-type="image"],
+    [data-content-type="video"]
   )
   .bn-media-card-preview,
 .ProseMirror-focused:not([data-media-selection-dismissed])
   .bn-block-content:is(
-    [data-content-type="aiImage"],
-    [data-content-type="aiVideo"]
+    [data-content-type="image"],
+    [data-content-type="video"]
   ).ProseMirror-selectednode
   .bn-media-card-preview {
   outline: 1px solid var(--bn-media-selection-color, #38bdf8);

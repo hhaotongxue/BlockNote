@@ -58,7 +58,7 @@ const formatKeys = [
   "quote",
   "code_block",
 ];
-const basicKeys = ["aiImage", "table", "file", "aiVideo", "audio"];
+const basicKeys = ["image", "table", "file", "video", "audio"];
 const labels: Record<string, string> = {
   paragraph: "正文",
   image: "图片",
@@ -87,8 +87,6 @@ const commandIcons: Record<string, LucideIcon> = {
   table: Table2,
   file: FileText,
   video: Video,
-  aiImage: Image,
-  aiVideo: Video,
   audio: AudioLines,
   emoji: Smile,
   toggle_heading: Heading1,
@@ -268,18 +266,18 @@ export function BlockNoteCommandMenu() {
               },
             };
           });
-        for (const type of ["aiImage", "aiVideo"] as const) {
+        for (const type of ["image", "video"] as const) {
           if (!(type in editor.schema.blockSchema)) {
             continue;
           }
           commands.push({
-            title: type === "aiImage" ? "图片" : "视频",
+            title: type === "image" ? "图片" : "视频",
             subtext: "上传素材或使用 AI 创作",
             aliases: [
               type,
               "AI",
-              type === "aiImage" ? "image" : "video",
-              type === "aiImage" ? "图片卡片" : "视频卡片",
+              type === "image" ? "image" : "video",
+              type === "image" ? "图片卡片" : "视频卡片",
             ],
             commandKey: type,
             section: "基础",

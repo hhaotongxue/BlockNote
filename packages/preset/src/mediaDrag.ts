@@ -115,7 +115,7 @@ export function installMediaDrag<
       closest.rect,
       drag.x,
       drag.y,
-      editor.getBlock(id)?.type === "aiImage",
+      editor.getBlock(id)?.type === "image",
     );
     const parent = editor.getParentBlock(id);
     const horizontal = side === "before" || side === "after";
@@ -177,7 +177,7 @@ export function installMediaDrag<
   function start(event: DragEvent) {
     const element = event.target instanceof Element ? event.target : null;
     const card = element?.closest<HTMLElement>(
-      '.bn-media-card[data-kind="aiImage"]',
+      '.bn-media-card[data-kind="image"]',
     );
     if (
       !editor.isEditable ||

@@ -50,16 +50,11 @@ export function moveMediaCard<
   }
   const source = editor.getBlock(sourceId);
   const target = editor.getBlock(targetId);
-  if (
-    !source ||
-    source.type !== "aiImage" ||
-    !target ||
-    sourceId === targetId
-  ) {
+  if (!source || source.type !== "image" || !target || sourceId === targetId) {
     return;
   }
   const beside = side === "left" || side === "right";
-  if (beside && target.type !== "aiImage") {
+  if (beside && target.type !== "image") {
     return;
   }
   const sourceParent = editor.getParentBlock(sourceId);

@@ -199,7 +199,10 @@
   margin: 0 auto;
   padding: 102px 0 20px;
   overflow: visible;
-  --affine-editor-width: min(760px, calc(100% - 48px));
+  --affine-editor-width: min(
+    var(--bn-document-max-width, 760px),
+    calc(100% - 48px)
+  );
   --affine-editor-side-padding: 24px;
   --bn-editor-side-padding: 24px;
 

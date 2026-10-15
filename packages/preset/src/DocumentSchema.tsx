@@ -14,6 +14,7 @@ import {
 import { createPresetCodeBlockSpec } from "./CodeBlock.js";
 import { createMediaCardSpec, type MediaCardRuntime } from "./MediaCard.js";
 
+import { documentBlockNames } from "./documentContent.js";
 import { createMediaRowSpec } from "./MediaRow.js";
 
 export interface DocumentReferenceOptions {
@@ -29,12 +30,12 @@ export function createDocumentSchema(options: DocumentReferenceOptions = {}) {
   return BlockNoteSchema.create({
     blockSpecs: {
       ...defaultBlockSpecs,
-      mediaRow: createMediaRowSpec(),
-      aiImage: createMediaCardSpec("aiImage", options.media),
-      aiVideo: createMediaCardSpec("aiVideo", options.media),
+      [documentBlockNames.mediaRow]: createMediaRowSpec(),
+      image: createMediaCardSpec("image", options.media),
+      video: createMediaCardSpec("video", options.media),
       codeBlock: createPresetCodeBlockSpec(),
-      mathBlock: createReactMathBlockSpec(),
-      bookmark: createReactBlockSpec(
+      [documentBlockNames.mathBlock]: createReactMathBlockSpec(),
+      [documentBlockNames.bookmark]: createReactBlockSpec(
         {
           type: "bookmark",
           propSchema: {

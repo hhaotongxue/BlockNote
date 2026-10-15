@@ -21,7 +21,7 @@ Object.defineProperty(window, "matchMedia", {
 
 afterEach(() => vi.restoreAllMocks());
 
-it.each(["aiImage", "aiVideo"] as const)(
+it.each(["image", "video"] as const)(
   "%s opens its toolbar on card click and its input only from settings",
   async (kind) => {
     const spec = createMediaCardSpec(kind, {
@@ -90,7 +90,7 @@ it.each(["aiImage", "aiVideo"] as const)(
       ).toBe("");
       (host.querySelector(".bn-media-card-preview") as HTMLElement).click();
       const toolbarSelector =
-        '[aria-label="' + (kind === "aiImage" ? "图片操作" : "视频操作") + '"]';
+        '[aria-label="' + (kind === "image" ? "图片操作" : "视频操作") + '"]';
       await vi.waitFor(() =>
         expect(document.querySelector(toolbarSelector)).not.toBeNull(),
       );
@@ -163,7 +163,7 @@ it.each(["aiImage", "aiVideo"] as const)(
       expect(host.contains(panel)).toBe(false);
       expect(panel.querySelector("textarea")?.value).toBe("Harbour");
       const toolbar = document.querySelector(
-        '[aria-label="' + (kind === "aiImage" ? "图片操作" : "视频操作") + '"]',
+        '[aria-label="' + (kind === "image" ? "图片操作" : "视频操作") + '"]',
       ) as HTMLElement;
       expect(host.contains(toolbar)).toBe(false);
       expect(toolbar.querySelector('[aria-label="上传素材"]')).not.toBeNull();
@@ -198,17 +198,17 @@ it("loads intrinsic image ratios and handles side drops with the native document
     schema: BlockNoteSchema.create({
       blockSpecs: {
         ...defaultBlockSpecs,
-        aiImage: createMediaCardSpec("aiImage"),
+        image: createMediaCardSpec("image"),
         mediaRow: createMediaRowSpec(),
       },
     }),
     initialContent: [
       {
         id: "portrait",
-        type: "aiImage",
+        type: "image",
         props: { url: "portrait.jpg", aspectRatio: "16:9" },
       },
-      { id: "landscape", type: "aiImage", props: { url: "landscape.jpg" } },
+      { id: "landscape", type: "image", props: { url: "landscape.jpg" } },
     ],
   });
   const host = document.createElement("div");
@@ -369,7 +369,7 @@ it("defers file reads until near the viewport and ignores unrelated task updates
   const editor = BlockNoteEditor.create({
     schema: BlockNoteSchema.create({
       blockSpecs: {
-        aiImage: createMediaCardSpec("aiImage", {
+        image: createMediaCardSpec("image", {
           task: () => ({ status }),
           subscribe: (listener) => {
             notify = listener;
@@ -382,7 +382,7 @@ it("defers file reads until near the viewport and ignores unrelated task updates
     }),
     resolveFileUrl,
     initialContent: [
-      { type: "aiImage", props: { url: "large.png", taskId: "job" } },
+      { type: "image", props: { url: "large.png", taskId: "job" } },
     ],
   });
   const host = document.createElement("div");

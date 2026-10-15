@@ -19,3 +19,16 @@
 packages/xl-typst-compiler/pkg
 **/playwright-report
 tests/.vitest-attachments
+
+# Nexus consumes local editor source and its generated TypeScript declarations.
+# Runtime dist and host node_modules remain excluded.
+!packages/core/types
+!packages/core/types/**
+!packages/react/types
+!packages/react/types/**
+!packages/mantine/types
+!packages/mantine/types/**
+!packages/code-block/types
+!packages/code-block/types/**
+!packages/math-block/types
+!packages/math-block/types/**

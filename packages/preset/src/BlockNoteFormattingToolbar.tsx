@@ -181,9 +181,7 @@ export function BlockNoteFormattingToolbar() {
         editor.getTextCursorPosition().block,
       ];
       return selected.some((block) =>
-        ["aiImage", "aiVideo", "image", "video", "mediaRow"].includes(
-          block.type,
-        ),
+        ["image", "video", "mediaRow"].includes(block.type),
       );
     },
   });

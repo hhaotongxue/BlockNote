@@ -7,9 +7,10 @@ import {
 } from "@blocknote/react";
 import { Image, Video, SlidersHorizontal, Shell } from "lucide-react";
 
+import { parseMediaElement } from "./mediaImport.js";
 import { mediaRatio, removeMediaCard } from "./mediaLayout.js";
 
-export type MediaCardKind = "aiImage" | "aiVideo";
+export type MediaCardKind = "image" | "video";
 export interface MediaCardTask {
   status: string;
   description?: string;
@@ -77,7 +78,7 @@ function MediaCard({
   runtime?: MediaCardRuntime;
 }) {
   const props: MediaCardValues = block.props;
-  const video = block.type === "aiVideo";
+  const video = block.type === "video";
   const portalElement = usePortalElement();
   const [fileInput, setFileInput] = useState<HTMLInputElement | null>(null);
   const card = useRef<HTMLDivElement>(null);
@@ -645,7 +646,9 @@ export function createMediaCardSpec<T extends MediaCardKind>(
   const spec = createReactBlockSpec(
     { type, propSchema: mediaCardProps, content: "none" },
     {
-      meta: { fileBlockAccept: [type === "aiVideo" ? "video/*" : "image/*"] },
+      meta: { fileBlockAccept: [type === "video" ? "video/*" : "image/*"] },
+      runsBefore: ["file"],
+      parse: (element) => parseMediaElement(element, type),
       render: ({ block, editor }) => (
         <PortalElementOverride
           target={typeof document === "undefined" ? undefined : document.body}
@@ -661,7 +664,7 @@ export function createMediaCardSpec<T extends MediaCardKind>(
         }
         return (
           <figure>
-            {type === "aiVideo" ? (
+            {type === "video" ? (
               <video src={url} controls />
             ) : (
               <img src={url} alt={caption} />
@@ -677,11 +680,9 @@ export function createMediaCardSpec<T extends MediaCardKind>(
     const figure = document.createElement("figure");
     const url = String(block.props.url || "");
     if (url) {
-      const media = document.createElement(
-        type === "aiVideo" ? "video" : "img",
-      );
+      const media = document.createElement(type === "video" ? "video" : "img");
       media.setAttribute("src", url);
-      if (type === "aiVideo") {
+      if (type === "video") {
         media.setAttribute("controls", "");
       } else {
         media.setAttribute("alt", String(block.props.caption || ""));

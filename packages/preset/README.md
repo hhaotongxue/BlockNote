@@ -52,7 +52,7 @@ corepack pnpm@11.8.0 exec vp run --filter @blocknote/core --filter @blocknote/re
 
 ### 图片尺寸与并排
 
-- `aiImage` / `aiVideo` 有素材时使用素材实际比例；空卡片使用生成比例。
+- `image` / `video` 有素材时使用素材实际比例；空卡片使用生成比例。
 - `previewWidth: 0` 表示铺满可用宽度；单张卡片两侧手柄修改这个宽度，高度始终随素材比例变化。
 - 拖动图片本身，到另一图片中部的左/右半边可组成 `mediaRow`；顶部/底部为上下插入。蓝色插入线表示落点。
 - `mediaRow` 只保存原图片块的 `children` 顺序。CSS 根据加载的图片宽高比分配 flex 权重，扣除 12px 间距后铺满整行，无裁剪。行内忽略单图手动宽度，拖出后恢复。

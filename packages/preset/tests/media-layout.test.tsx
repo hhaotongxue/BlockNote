@@ -18,18 +18,18 @@ function createEditor() {
     schema: BlockNoteSchema.create({
       blockSpecs: {
         ...defaultBlockSpecs,
-        aiImage: createMediaCardSpec("aiImage"),
+        image: createMediaCardSpec("image"),
         mediaRow: createMediaRowSpec(),
       },
     }),
     initialContent: [
       {
         id: "a",
-        type: "aiImage",
+        type: "image",
         props: { url: "portrait.jpg", previewWidth: 240, taskId: "task-a" },
       },
-      { id: "b", type: "aiImage", props: { url: "landscape.jpg" } },
-      { id: "c", type: "aiImage", props: { url: "square.jpg" } },
+      { id: "b", type: "image", props: { url: "landscape.jpg" } },
+      { id: "c", type: "image", props: { url: "square.jpg" } },
       { id: "text", type: "paragraph", content: "After images" },
     ],
   });
@@ -71,7 +71,7 @@ it("deleting from a two-image row restores the remaining single image", () => {
   moveMediaCard(editor, "a", "b", "right");
   removeMediaCard(editor, "a");
   expect(editor.document[0].id).toBe("b");
-  expect(editor.document[0].type).toBe("aiImage");
+  expect(editor.document[0].type).toBe("image");
 });
 
 it("undo and redo restore the whole grouping operation", () => {

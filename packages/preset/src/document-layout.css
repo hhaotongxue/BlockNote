@@ -1,0 +1,11 @@
+/* Shared document measure for application pages and published web readers. */
+:root {
+  --bn-document-max-width: 760px;
+}
+
+.bn-document-reader {
+  box-sizing: border-box;
+  width: min(var(--bn-document-max-width, 760px), calc(100% - 48px));
+  margin-inline: auto;
+  --bn-editor-side-padding: 24px;
+}

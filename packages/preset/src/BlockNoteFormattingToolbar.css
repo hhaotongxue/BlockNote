@@ -1,5 +1,8 @@
 /* Presentation only: upstream buttons retain state, commands and tooltips. */
 .bn-mantine .bn-toolbar.ls-formatting-toolbar {
+  --bn-colors-hovered-background: var(--bn-preset-button-hover);
+  --bn-colors-selected-background: var(--bn-colors-hovered-background);
+  --bn-colors-selected-text: var(--bn-preset-text-primary);
   padding: 6px;
   gap: 3px;
   border: 1px solid var(--bn-preset-border, var(--bn-colors-border));
@@ -9,7 +12,7 @@
   box-shadow: 0 6px 24px rgb(0 0 0 / 12%);
 }
 .bn-container[data-color-scheme="dark"] .ls-formatting-toolbar {
-  --bn-colors-hovered-background: #333;
+  --bn-colors-hovered-background: #454545;
   --bn-colors-selected-background: #454545;
 }
 .ls-formatting-toolbar .mantine-Button-root,
@@ -78,7 +81,7 @@
   margin-top: 4px;
 }
 .bn-container[data-color-scheme="dark"] .ls-block-type-menu {
-  --bn-preset-button-hover: #333;
+  --bn-preset-button-hover: #454545;
 }
 .bn-mantine
   .ls-block-type-menu
@@ -95,11 +98,6 @@
     --bn-preset-button-hover,
     var(--bn-colors-hovered-background)
   );
-}
-.bn-container[data-color-scheme="dark"]
-  .ls-block-type-menu
-  .mantine-Menu-item:has(.bn-tick-icon) {
-  background: #454545;
 }
 .bn-mantine .ls-block-type-menu .bn-tick-icon {
   color: var(--bn-preset-text-secondary);

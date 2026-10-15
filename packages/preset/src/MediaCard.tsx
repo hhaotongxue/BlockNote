@@ -44,6 +44,7 @@ export interface MediaCardSlotContext {
   close: () => void;
 }
 export interface MediaCardRuntime {
+  renderImagePreview?: (src: string, onClose: () => void) => ReactNode;
   renderMediaToolbar?: (context: MediaCardSlotContext) => ReactNode;
   renderMediaPanel?: (context: MediaCardSlotContext) => ReactNode;
   notifyError?: (message: string) => void;
@@ -86,6 +87,7 @@ function MediaCard({
   const [toolbarOpen, setToolbarOpen] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
   const [captionOpen, setCaptionOpen] = useState(false);
+  const [imagePreviewOpen, setImagePreviewOpen] = useState(false);
   const [captionDraft, setCaptionDraft] = useState("");
   const [nearViewport, setNearViewport] = useState(
     () => typeof IntersectionObserver === "undefined",
@@ -451,6 +453,14 @@ function MediaCard({
                     loading="lazy"
                     decoding="async"
                     draggable={false}
+                    onDoubleClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      setToolbarOpen(false);
+                      setPanelOpen(false);
+                      setCaptionOpen(false);
+                      setImagePreviewOpen(true);
+                    }}
                     onLoad={(event) =>
                       setDimensions({
                         source: url,
@@ -620,6 +630,10 @@ function MediaCard({
           event.target.value = "";
         }}
       />
+      {imagePreviewOpen &&
+        url &&
+        !video &&
+        runtime?.renderImagePreview?.(url, () => setImagePreviewOpen(false))}
     </div>
   );
 }

@@ -58,3 +58,7 @@ corepack pnpm@11.8.0 exec vp run --filter @blocknote/core --filter @blocknote/re
 - `mediaRow` 只保存原图片块的 `children` 顺序。CSS 根据加载的图片宽高比分配 flex 权重，扣除 12px 间距后铺满整行，无裁剪。行内忽略单图手动宽度，拖出后恢复。
 - 移动、成行、拆行通过公开 block API 在同一事务中完成，保留图片 ID 与任务绑定。宿主的 headless schema 需要注册 `mediaRow` 和 `previewWidth`。
 - 这一布局限定为图片行，不引入通用分栏依赖；外部 Markdown/HTML 的默认有损导出仍以独立图片输出。
+
+### 文档素材面板
+
+文档素材弹窗样式由 `@blocknote/preset/document-materials.module.css` 提供。素材按原图比例展示，并按最短列分配为自适应瀑布流；宿主负责素材引用、上传与公共图片预览。

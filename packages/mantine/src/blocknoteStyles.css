@@ -196,7 +196,7 @@
 
 .bn-toolbar .mantine-Button-root,
 .bn-toolbar .mantine-ActionIcon-root {
-  background-color: var(--bn-colors-menu-background);
+  background-color: transparent;
   border: none;
   border-radius: var(--bn-border-radius-small);
   color: var(--bn-colors-menu-text);
@@ -223,7 +223,7 @@ on touch devices (e.g. the mobile formatting toolbar). */
 
 .bn-toolbar .mantine-Button-root[data-disabled],
 .bn-toolbar .mantine-ActionIcon-root[data-disabled] {
-  background-color: var(--bn-colors-disabled-background);
+  background-color: transparent;
   border: none;
   color: var(--bn-colors-disabled-text);
 }

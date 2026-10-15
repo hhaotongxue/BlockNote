@@ -8,6 +8,10 @@
   color: var(--bn-preset-text-primary, var(--bn-colors-menu-text));
   box-shadow: 0 6px 24px rgb(0 0 0 / 12%);
 }
+.bn-container[data-color-scheme="dark"] .ls-formatting-toolbar {
+  --bn-colors-hovered-background: #333;
+  --bn-colors-selected-background: #454545;
+}
 .ls-formatting-toolbar .mantine-Button-root,
 .ls-formatting-toolbar .mantine-ActionIcon-root {
   height: 32px;
@@ -64,10 +68,17 @@
   min-height: 36px;
   padding: 6px 10px;
   border-radius: 6px;
+  background: transparent;
   font-size: 13px;
   line-height: 20px;
   font-weight: 400;
   color: inherit;
+}
+.bn-mantine .ls-block-type-menu .mantine-Menu-item + .mantine-Menu-item {
+  margin-top: 4px;
+}
+.bn-container[data-color-scheme="dark"] .ls-block-type-menu {
+  --bn-preset-button-hover: #333;
 }
 .bn-mantine
   .ls-block-type-menu
@@ -84,6 +95,11 @@
     --bn-preset-button-hover,
     var(--bn-colors-hovered-background)
   );
+}
+.bn-container[data-color-scheme="dark"]
+  .ls-block-type-menu
+  .mantine-Menu-item:has(.bn-tick-icon) {
+  background: #454545;
 }
 .bn-mantine .ls-block-type-menu .bn-tick-icon {
   color: var(--bn-preset-text-secondary);

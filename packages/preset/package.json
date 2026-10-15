@@ -17,6 +17,7 @@
       "types": "./src/index.ts",
       "import": "./src/index.ts"
     },
+    "./document-materials.module.css": "./src/document-materials.module.css",
     "./style.css": "./src/style.css",
     "./page.module.less": "./src/page.module.less"
   },

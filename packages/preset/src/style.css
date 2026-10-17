@@ -19,3 +19,11 @@
   margin: 6px 0;
   color: var(--bn-colors-menu-text);
 }
+
+/* Compact editors rely on their host card padding, not document edge spacing. */
+.bn-preset-compact .bn-editor > .bn-block-group > .bn-block-outer:first-child {
+  margin-block-start: 0;
+}
+.bn-preset-compact .bn-editor > .bn-block-group > .bn-block-outer:last-child {
+  margin-block-end: 0;
+}

@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, Folder, Inbox } from "lucide-react";
 import styles from "./page.module.less";
 
 export interface DocumentLinkItem {
@@ -64,7 +64,13 @@ export function DocumentLinks({
                         onClick={() => onSelectDoc?.(link.id)}
                       >
                         <span className={styles.linkCardIcon}>
-                          {link.icon || "📄"}
+                          {link.icon === "inbox" ? (
+                            <Inbox size={18} aria-hidden="true" />
+                          ) : link.icon === "folder" ? (
+                            <Folder size={18} aria-hidden="true" />
+                          ) : (
+                            link.icon || "📄"
+                          )}
                         </span>
                         <span className={styles.linkCardTitle}>
                           {link.title || "未命名文档"}

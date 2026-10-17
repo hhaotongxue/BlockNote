@@ -17,10 +17,15 @@ type CardProps<
   B extends BlockSchema,
   I extends InlineContentSchema,
   S extends StyleSchema,
-> = Pick<ComponentProps<typeof BlockNoteView<B, I, S>>, "editor" | "theme"> & {
+> = Pick<
+  ComponentProps<typeof BlockNoteView<B, I, S>>,
+  "editor" | "theme" | "children"
+> & {
   mode: "readonly" | "editable";
-  maxHeight?: number;
+  /** null expands the card to its full content height. */
+  maxHeight?: number | null;
   scrollable?: boolean;
+  autoFocus?: boolean;
 };
 
 /** Body only: titles, persistence and business actions belong to the host. */
@@ -31,9 +36,11 @@ export function CardEditorView<
 >({
   editor,
   theme,
+  children,
   mode,
   maxHeight = 320,
   scrollable = true,
+  autoFocus = false,
 }: CardProps<B, I, S>) {
   const viewport = useRef<HTMLDivElement>(null);
   const [edges, setEdges] = useState({ top: false, bottom: false });
@@ -78,7 +85,12 @@ export function CardEditorView<
     <div
       className="bn-preset-card"
       data-mode={mode}
-      style={{ "--bn-card-max-height": `${maxHeight}px` } as CSSProperties}
+      style={
+        {
+          "--bn-card-max-height":
+            maxHeight === null ? "none" : `${maxHeight}px`,
+        } as CSSProperties
+      }
     >
       <div
         ref={viewport}
@@ -107,7 +119,15 @@ export function CardEditorView<
             linkToolbar={false}
           />
         ) : (
-          <EditorView editor={editor} theme={theme} editable />
+          <EditorView
+            editor={editor}
+            theme={theme}
+            editable
+            sideMenu={false}
+            autoFocus={autoFocus}
+          >
+            {children}
+          </EditorView>
         )}
       </div>
     </div>

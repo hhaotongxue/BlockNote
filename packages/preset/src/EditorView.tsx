@@ -23,6 +23,8 @@ export function EditorView<
   children,
   onClickCapture,
   selectionColor = "#38bdf8",
+  sideMenu = true,
+  className,
   style,
   ...props
 }: ComponentProps<typeof BlockNoteView<B, I, S>> & {
@@ -31,9 +33,11 @@ export function EditorView<
 }) {
   const selectionStyle: CSSProperties & {
     "--bn-media-selection-color": string;
+    "--bn-editor-side-padding"?: string;
   } = {
     ...style,
     "--bn-media-selection-color": selectionColor,
+    ...(sideMenu === false ? { "--bn-editor-side-padding": "0px" } : {}),
   };
   useCreationPolicy(props.editor);
   useEffect(() => {
@@ -86,6 +90,9 @@ export function EditorView<
     <BlockNoteView
       {...props}
       style={selectionStyle}
+      className={[className, sideMenu === false && "bn-preset-compact"]
+        .filter(Boolean)
+        .join(" ")}
       sideMenu={false}
       slashMenu={false}
       formattingToolbar={false}
@@ -97,7 +104,7 @@ export function EditorView<
         }
       }}
     >
-      <BlockNoteSideMenu />
+      {sideMenu !== false && <BlockNoteSideMenu />}
       <BlockNoteCommandMenu />
       <BlockNoteFormattingToolbar />
       {props.tableHandles !== false && <BlockNoteTableHandles />}

@@ -10,6 +10,7 @@
     "oxlint-tsgolint": "^7.0.2001",
     "serve": "14.2.6",
     "typescript": "^7.0.2",
+    "typescript-packaging": "npm:typescript@6.0.2",
     "vite-plus": "catalog:",
     "wait-on": "9.0.5"
   },
@@ -37,7 +38,9 @@
     "start": "vp run --filter @blocknote/example-editor preview",
     "test": "vp run --filter \"@blocknote/*\" --filter \"docs\" test",
     "format": "vp fmt",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "release:check": "node scripts/cnb-release.mjs check",
+    "release:prepare": "node scripts/cnb-release.mjs prepare"
   },
   "overrides": {
     "msw": "2.11.5",

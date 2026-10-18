@@ -7,7 +7,7 @@
 - lianshu 仅连接文档、保存、附件、文档引用和业务页面事件；不得新增编辑器 CSS、选择器覆盖、内联视觉补丁或复制 preset 组件。
 - 页面外壳样式也归 preset 的 `page.module.less`，消费方只引用样式类。主题颜色可以读取宿主已有通用变量，但编辑器提供独立明暗默认值，不要求宿主写 CSS。
 - 不新增 `!important`。迁移保留既有页面规则，后续清理单独评估。
-- 本地统一从此仓库读取 Core/React/Mantine/preset；跨项目用相同版本的四个包。不得混入 npm 上游版本。
+- 产品统一安装此仓库发布的私有 `@lianshu/blocknote` 包；Core/React/Mantine/preset/code-block/math-block 作为同一版本的子入口。源码工作区仅用于编辑器自身开发，产品不得依赖兄弟目录或混入 npm 上游版本。见 `docs/lianshu/npm-release.md`。
 - 检查构建和策略测试；视觉由用户本地验收，未经允许不打开浏览器。
 
 见 `packages/preset/README.md` 获取接入方式。

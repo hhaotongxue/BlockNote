@@ -25,6 +25,7 @@ it.each(["image", "video"] as const)(
   "%s opens its toolbar on card click and its input only from settings",
   async (kind) => {
     const spec = createMediaCardSpec(kind, {
+      captionsEnabled: true,
       renderMediaToolbar: (context) => (
         <>
           <button aria-label="上传素材" onClick={context.upload}>
@@ -421,5 +422,67 @@ it("defers file reads until near the viewport and ignores unrelated task updates
     host.remove();
     editor.unmount();
     vi.unstubAllGlobals();
+  }
+});
+
+it.each(["image", "video"] as const)(
+  "%s keeps stored captions but omits visible captions from external HTML by default",
+  async (kind) => {
+    const editor = BlockNoteEditor.create({
+      schema: BlockNoteSchema.create({
+        blockSpecs: {
+          ...defaultBlockSpecs,
+          [kind]: createMediaCardSpec(kind),
+        },
+      }),
+      initialContent: [
+        {
+          type: kind,
+          props: { url: "https://example.com/media", caption: "保留的说明" },
+        },
+      ],
+    });
+    const html = await editor.blocksToHTMLLossy(editor.document);
+    const output = new DOMParser().parseFromString(html, "text/html");
+    expect(output.querySelector("figcaption")).toBeNull();
+    expect(output.body.textContent).not.toContain("保留的说明");
+    if (kind === "image") {
+      expect(output.querySelector("img")?.alt).toBe("保留的说明");
+    }
+    expect(editor.document[0].props).toMatchObject({ caption: "保留的说明" });
+  },
+);
+
+it("read-only media omits the caption without discarding its stored value", async () => {
+  const editor = BlockNoteEditor.create({
+    schema: BlockNoteSchema.create({
+      blockSpecs: { image: createMediaCardSpec("image") },
+    }),
+    initialContent: [
+      {
+        type: "image",
+        props: { url: "https://example.com/photo.jpg", caption: "历史说明" },
+      },
+    ],
+  });
+  const host = document.createElement("div");
+  document.body.append(host);
+  const root = createRoot(host);
+  root.render(
+    <MantineProvider>
+      <BlockNoteView editor={editor} editable={false} />
+    </MantineProvider>,
+  );
+  try {
+    await vi.waitFor(() =>
+      expect(host.querySelector(".bn-media-card-preview img")).not.toBeNull(),
+    );
+    expect(host.querySelector(".bn-media-card-caption")).toBeNull();
+    expect(host.textContent).not.toContain("历史说明");
+    expect(host.querySelector("img")?.alt).toBe("历史说明");
+    expect(editor.document[0].props.caption).toBe("历史说明");
+  } finally {
+    root.unmount();
+    host.remove();
   }
 });

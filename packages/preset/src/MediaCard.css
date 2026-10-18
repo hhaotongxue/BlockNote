@@ -304,3 +304,9 @@
   border-radius: 2px;
   pointer-events: none;
 }
+
+/* Keep the reusable caption editor intact, but hide its host-toolbar entry by default. */
+.bn-media-card-toolbar-panel[data-captions-enabled="false"]
+  [aria-label="素材说明"] {
+  display: none;
+}

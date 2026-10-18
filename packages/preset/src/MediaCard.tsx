@@ -45,6 +45,8 @@ export interface MediaCardSlotContext {
   close: () => void;
 }
 export interface MediaCardRuntime {
+  /** Opt-in only: retain stored captions/alt text without exposing visible captions. */
+  captionsEnabled?: boolean;
   renderImagePreview?: (src: string, onClose: () => void) => ReactNode;
   renderMediaToolbar?: (context: MediaCardSlotContext) => ReactNode;
   renderMediaPanel?: (context: MediaCardSlotContext) => ReactNode;
@@ -265,6 +267,9 @@ function MediaCard({
     update,
     upload: () => fileInput?.click(),
     editCaption: () => {
+      if (!runtime?.captionsEnabled) {
+        return;
+      }
       setCaptionDraft(props.caption);
       setCaptionOpen(true);
     },
@@ -345,6 +350,7 @@ function MediaCard({
           <Popover.Dropdown
             ref={toolbar}
             className="bn-media-card-panel bn-media-card-toolbar-panel"
+            data-captions-enabled={runtime?.captionsEnabled === true}
             role="toolbar"
             aria-label={video ? "视频操作" : "图片操作"}
           >
@@ -617,7 +623,7 @@ function MediaCard({
           })}
         </Popover.Dropdown>
       </Popover>
-      {props.caption && (
+      {runtime?.captionsEnabled && props.caption && (
         <div className="bn-media-card-caption">{props.caption}</div>
       )}
 
@@ -669,13 +675,15 @@ export function createMediaCardSpec<T extends MediaCardKind>(
             ) : (
               <img src={url} alt={caption} />
             )}
-            {caption && <figcaption>{caption}</figcaption>}
+            {runtime?.captionsEnabled && caption && (
+              <figcaption>{caption}</figcaption>
+            )}
           </figure>
         );
       },
     },
   )();
-  // External documents contain only media and its caption, never task/config metadata.
+  // External documents retain alt text; visible captions require explicit opt-in.
   spec.implementation.toExternalHTML = (block) => {
     const figure = document.createElement("figure");
     const url = String(block.props.url || "");
@@ -688,7 +696,7 @@ export function createMediaCardSpec<T extends MediaCardKind>(
         media.setAttribute("alt", String(block.props.caption || ""));
       }
       figure.append(media);
-      if (block.props.caption) {
+      if (runtime?.captionsEnabled && block.props.caption) {
         const caption = document.createElement("figcaption");
         caption.textContent = String(block.props.caption);
         figure.append(caption);

@@ -27,3 +27,20 @@
 .bn-preset-compact .bn-editor > .bn-block-group > .bn-block-outer:last-child {
   margin-block-end: 0;
 }
+
+/* Full-block selections retain the document's spacing and text colors. */
+.bn-container {
+  --bn-whole-selection-fill: var(--bn-preset-bg-secondary, #f7f7f7);
+}
+.bn-editor .bn-whole-block-selection {
+  border-radius: 6px;
+  /* Extend only the paint, so selection never shifts text or list markers. */
+  box-shadow:
+    inset 0 0 0 100vmax var(--bn-whole-selection-fill),
+    -6px 0 0 var(--bn-whole-selection-fill),
+    6px 0 0 var(--bn-whole-selection-fill);
+}
+.bn-editor .bn-whole-block-selection::selection,
+.bn-editor .bn-whole-block-selection ::selection {
+  background: transparent;
+}

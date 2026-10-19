@@ -1,6 +1,12 @@
 import { Extension } from "@tiptap/core";
 import { Fragment, Node } from "prosemirror-model";
-import { NodeSelection, TextSelection } from "prosemirror-state";
+import {
+  AllSelection,
+  NodeSelection,
+  Plugin,
+  TextSelection,
+} from "prosemirror-state";
+import { Decoration, DecorationSet } from "prosemirror-view";
 
 import { mergeBlocksCommand } from "../../../api/blockManipulation/commands/mergeBlocks/mergeBlocks.js";
 import {
@@ -29,6 +35,42 @@ export const KeyboardShortcutsExtension = Extension.create<{
   tabBehavior: "prefer-navigate-ui" | "prefer-indent";
 }>({
   priority: 50,
+
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        props: {
+          decorations(state) {
+            const { selection, doc } = state;
+            const { $from, $to } = selection;
+            const wholeTextBlock =
+              selection instanceof TextSelection &&
+              !selection.empty &&
+              $from.sameParent($to) &&
+              $from.parent.isTextblock &&
+              $from.parentOffset === 0 &&
+              $to.parentOffset === $to.parent.content.size;
+            if (!(selection instanceof AllSelection) && !wholeTextBlock) {
+              return null;
+            }
+            const decorations: Decoration[] = [];
+            doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+              if (node.type.isInGroup("blockContent")) {
+                decorations.push(
+                  Decoration.node(pos, pos + node.nodeSize, {
+                    class: "bn-whole-block-selection",
+                  }),
+                );
+                return false;
+              }
+              return true;
+            });
+            return DecorationSet.create(doc, decorations);
+          },
+        },
+      }),
+    ];
+  },
 
   // TODO: The shortcuts need a refactor. Do we want to use a command priority
   //  design as there is now, or clump the logic into a single function?
@@ -878,6 +920,25 @@ export const KeyboardShortcutsExtension = Extension.create<{
     };
 
     return {
+      "Mod-a": () => {
+        const { selection } = this.editor.state;
+        const { $from, $to } = selection;
+        // Derive the stage from the selection, so moving the cursor resets it.
+        // Higher-priority source/table keymaps retain their own behavior.
+        if (
+          selection instanceof TextSelection &&
+          $from.sameParent($to) &&
+          $from.parent.isTextblock &&
+          ($from.parentOffset !== 0 ||
+            $to.parentOffset !== $to.parent.content.size)
+        ) {
+          return this.editor.commands.setTextSelection({
+            from: $from.start(),
+            to: $from.end(),
+          });
+        }
+        return this.editor.commands.selectAll();
+      },
       Backspace: handleBackspace,
       Delete: handleDelete,
       Enter: () => handleEnter(),

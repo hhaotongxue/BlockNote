@@ -356,16 +356,16 @@ export const BlockNoteViewEditor = (props: { children?: ReactNode }) => {
 
   const mount = useCallback(
     (element: HTMLElement | null) => {
-      // Set editable state of the actual editor.
-      // We need to re-mount the editor when changing `isEditable` as TipTap
-      // removes the `tabIndex="0"` attribute we set (see
-      // `BlockNoteEditor.ts`). Ideally though, this logic would exist in a
-      // separate hook.
-      editor.isEditable = ctx.editorProps.editable !== false;
-      // Since we are not using TipTap's React Components, we need to set up the contentComponent it expects
-      // This is a simple replacement for the state management that Tiptap does internally
-      editor._tiptapEditor.contentComponent = portalManager;
       if (element) {
+        // Configure before mounting so node views observe the correct state.
+        // This changes view configuration, not document content: emitting an
+        // update here would make DOM-dependent listeners run before a view exists.
+        editor._tiptapEditor.setEditable(
+          ctx.editorProps.editable !== false,
+          false,
+        );
+        // TipTap's React node views need their portal manager before mounting.
+        editor._tiptapEditor.contentComponent = portalManager;
         editor.mount(element);
       } else {
         editor.unmount();

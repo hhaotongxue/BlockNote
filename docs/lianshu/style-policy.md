@@ -19,3 +19,7 @@
 ## 媒体卡片插槽（2026-10-12）
 
 用户授权媒体卡片采用宿主插槽：preset 只维护卡片、浮层定位和显隐；上下栏内容由宿主通过 `renderMediaToolbar` / `renderMediaPanel` 提供。共享媒体面板位于 `@lianshu/ui`，允许拥有自身样式，但不覆盖编辑器选择器。模型数据、上传服务、生成任务仍由宿主连接。Loomart 本次不修改。
+
+## 用户授权的挂载生命周期修复（2026-10-19）
+
+本次允许修复 `packages/react/src/editor/BlockNoteView.tsx` 的挂载配置：仅在连接 DOM 时设置可编辑状态，并使用 TipTap 的 `emitUpdate: false`，避免纯视图配置错误触发正文更新监听器。保留既有重挂载及只读焦点行为，不改变编辑引擎、schema 或序列化。此项是用户明确要求的故障修复，不扩大日常视觉定制范围。

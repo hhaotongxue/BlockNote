@@ -22,6 +22,7 @@ export function EditorView<
 >({
   children,
   onApplyMaterial,
+  onDownloadFile,
   onClickCapture,
   selectionColor = "#38bdf8",
   sideMenu = true,
@@ -32,6 +33,7 @@ export function EditorView<
   /** Media selection outline color. Accepts a CSS color or host CSS variable. */
   selectionColor?: string;
   onApplyMaterial?: () => void;
+  onDownloadFile?: (url: string, name?: string) => void;
 }) {
   const selectionStyle: CSSProperties & {
     "--bn-media-selection-color": string;
@@ -108,7 +110,7 @@ export function EditorView<
     >
       {sideMenu !== false && <BlockNoteSideMenu />}
       <BlockNoteCommandMenu onApplyMaterial={onApplyMaterial} />
-      <BlockNoteFormattingToolbar />
+      <BlockNoteFormattingToolbar onDownloadFile={onDownloadFile} />
       {props.tableHandles !== false && <BlockNoteTableHandles />}
       {children}
     </BlockNoteView>

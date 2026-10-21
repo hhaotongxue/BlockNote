@@ -1,7 +1,9 @@
-import { isValidElement, useMemo } from "react";
+import { isValidElement, useMemo, useCallback } from "react";
 import {
   ComponentsContext,
   FormattingToolbar,
+  getFormattingToolbarItems,
+  FileDownloadButton,
   FormattingToolbarController,
   blockTypeSelectItems,
   useComponentsContext,
@@ -11,6 +13,7 @@ import {
 import type { ComponentProps } from "@blocknote/react";
 import { zh } from "@blocknote/core/locales";
 import {
+  Download,
   Baseline,
   Bold,
   Italic,
@@ -80,7 +83,45 @@ const selectItems = blockTypeSelectItems(zh)
       : item;
   });
 
-function Toolbar() {
+type DownloadProps = { onDownloadFile?: (url: string, name?: string) => void };
+
+function SaveFileButton({ onDownloadFile }: Required<DownloadProps>) {
+  const editor = useBlockNoteEditor();
+  const components = useComponentsContext()!;
+  const block = useEditorState({
+    editor,
+    selector: ({ editor }) => {
+      const blocks = editor.getSelection()?.blocks || [
+        editor.getTextCursorPosition().block,
+      ];
+      return blocks.length === 1 ? blocks[0] : undefined;
+    },
+  });
+  if (
+    !block ||
+    !("url" in block.props) ||
+    typeof block.props.url !== "string"
+  ) {
+    return null;
+  }
+  const url = block.props.url;
+  const name =
+    "name" in block.props && typeof block.props.name === "string"
+      ? block.props.name
+      : undefined;
+  return (
+    <components.FormattingToolbar.Button
+      className="bn-button"
+      label="下载文件"
+      mainTooltip="下载文件"
+      icon={<Download size={18} />}
+      isDisabled={!url}
+      onClick={() => onDownloadFile(url, name)}
+    />
+  );
+}
+
+function Toolbar({ onDownloadFile }: DownloadProps) {
   const components = useComponentsContext()!;
   const themed = useMemo(() => {
     const OriginalButton = components.FormattingToolbar.Button;
@@ -167,12 +208,26 @@ function Toolbar() {
   }, [components]);
   return (
     <ComponentsContext.Provider value={themed}>
-      <FormattingToolbar blockTypeSelectItems={selectItems} />
+      <FormattingToolbar blockTypeSelectItems={selectItems}>
+        {getFormattingToolbarItems(selectItems).map((item) =>
+          onDownloadFile && item.type === FileDownloadButton ? (
+            <SaveFileButton key={item.key} onDownloadFile={onDownloadFile} />
+          ) : (
+            item
+          ),
+        )}
+      </FormattingToolbar>
     </ComponentsContext.Provider>
   );
 }
 
-export function BlockNoteFormattingToolbar() {
+export function BlockNoteFormattingToolbar({
+  onDownloadFile,
+}: DownloadProps = {}) {
+  const toolbar = useCallback(
+    () => <Toolbar onDownloadFile={onDownloadFile} />,
+    [onDownloadFile],
+  );
   const editor = useBlockNoteEditor();
   const containsMedia = useEditorState({
     editor,
@@ -190,5 +245,5 @@ export function BlockNoteFormattingToolbar() {
   if (containsMedia) {
     return null;
   }
-  return <FormattingToolbarController formattingToolbar={Toolbar} />;
+  return <FormattingToolbarController formattingToolbar={toolbar} />;
 }

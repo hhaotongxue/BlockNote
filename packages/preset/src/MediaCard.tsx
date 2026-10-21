@@ -102,7 +102,6 @@ function MediaCard({
   const [motionVisible, setMotionVisible] = useState(
     () => typeof IntersectionObserver === "undefined",
   );
-  const [hovered, setHovered] = useState(false);
   const [resolvedMedia, setResolvedMedia] = useState({ source: "", url: "" });
   const url = resolvedMedia.source === props.url ? resolvedMedia.url : "";
   const [dimensions, setDimensions] = useState({
@@ -335,16 +334,6 @@ function MediaCard({
           setToolbarOpen(true);
         }
       }}
-      onMouseEnter={() => {
-        if (video) {
-          setHovered(true);
-        }
-      }}
-      onMouseLeave={() => {
-        if (video) {
-          setHovered(false);
-        }
-      }}
       onDrop={(event) => {
         if (!editable) {
           return;
@@ -473,17 +462,19 @@ function MediaCard({
               {url ? (
                 video ? (
                   <video
-                    src={url}
-                    controls={hovered || toolbarOpen || panelOpen}
-                    preload="metadata"
-                    onLoadedMetadata={(event) =>
+                    src={`${url}#t=0.001`}
+                    controls
+                    playsInline
+                    aria-label={props.name || "视频"}
+                    preload="auto"
+                    style={{ aspectRatio: String(ratio) }}
+                    onLoadedMetadata={(event) => {
                       setDimensions({
                         source: url,
                         width: event.currentTarget.videoWidth,
                         height: event.currentTarget.videoHeight,
-                      })
-                    }
-                    onClick={() => setHovered(true)}
+                      });
+                    }}
                   />
                 ) : (
                   <img

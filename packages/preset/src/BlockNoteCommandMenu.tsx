@@ -35,6 +35,7 @@ import {
   Minus,
   Smile,
   SquarePlus,
+  FolderOpen,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { EditorTooltip } from "@blocknote/mantine";
@@ -58,7 +59,14 @@ const formatKeys = [
   "quote",
   "code_block",
 ];
-const basicKeys = ["image", "table", "file", "video", "audio"];
+const basicKeys = [
+  "image",
+  "table",
+  "file",
+  "video",
+  "audio",
+  "apply_material",
+];
 const labels: Record<string, string> = {
   paragraph: "正文",
   image: "图片",
@@ -88,6 +96,7 @@ const commandIcons: Record<string, LucideIcon> = {
   file: FileText,
   video: Video,
   audio: AudioLines,
+  apply_material: FolderOpen,
   emoji: Smile,
   toggle_heading: Heading1,
   toggle_heading_2: Heading2,
@@ -216,7 +225,9 @@ function CommandPalette({
   );
 }
 
-export function BlockNoteCommandMenu() {
+export function BlockNoteCommandMenu({
+  onApplyMaterial,
+}: { onApplyMaterial?: () => void } = {}) {
   const editor = useBlockNoteEditor();
   return (
     <SuggestionMenuController<(query: string) => Promise<Command[]>>
@@ -287,6 +298,16 @@ export function BlockNoteCommandMenu() {
                 props: { aiEnabled: true },
               } as any);
             },
+          });
+        }
+        if (onApplyMaterial) {
+          commands.push({
+            title: "应用素材",
+            subtext: "从素材库或产出库选择",
+            aliases: ["素材", "产出", "library", "material"],
+            commandKey: "apply_material",
+            section: "基础",
+            onItemClick: onApplyMaterial,
           });
         }
         const order = [...formatKeys, ...basicKeys];

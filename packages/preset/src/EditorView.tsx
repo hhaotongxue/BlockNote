@@ -21,6 +21,7 @@ export function EditorView<
   S extends StyleSchema,
 >({
   children,
+  onApplyMaterial,
   onClickCapture,
   selectionColor = "#38bdf8",
   sideMenu = true,
@@ -30,6 +31,7 @@ export function EditorView<
 }: ComponentProps<typeof BlockNoteView<B, I, S>> & {
   /** Media selection outline color. Accepts a CSS color or host CSS variable. */
   selectionColor?: string;
+  onApplyMaterial?: () => void;
 }) {
   const selectionStyle: CSSProperties & {
     "--bn-media-selection-color": string;
@@ -105,7 +107,7 @@ export function EditorView<
       }}
     >
       {sideMenu !== false && <BlockNoteSideMenu />}
-      <BlockNoteCommandMenu />
+      <BlockNoteCommandMenu onApplyMaterial={onApplyMaterial} />
       <BlockNoteFormattingToolbar />
       {props.tableHandles !== false && <BlockNoteTableHandles />}
       {children}

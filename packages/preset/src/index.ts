@@ -24,3 +24,8 @@ export type {
   MediaCardRuntime,
   MediaCardTask,
 } from "./MediaCard.js";
+
+export {
+  MaterialImportProgress,
+  type MaterialImportStatus,
+} from "./MaterialImportProgress.js";

@@ -1,0 +1,51 @@
+.bn-material-imports {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: min(320px, calc(100vw - 48px));
+  max-height: 45vh;
+  overflow: auto;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--color-text-primary, var(--bn-colors-editor-text, CanvasText));
+}
+.bn-material-imports section {
+  padding: 12px 14px;
+  border: 1px solid var(--color-border, var(--bn-colors-border, #8884));
+  border-radius: 10px;
+  background: var(--color-bg-base, var(--bn-colors-editor-background, Canvas));
+  box-shadow: 0 4px 20px #0002;
+}
+.bn-material-imports section > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.bn-material-imports span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bn-material-imports button {
+  display: flex;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 3px;
+}
+.bn-material-imports progress {
+  width: 100%;
+  height: 6px;
+  display: block;
+  margin: 10px 0 6px;
+  accent-color: var(--color-primary, #38bdf8);
+}
+.bn-material-imports small {
+  font-size: 12px;
+  opacity: 0.7;
+}

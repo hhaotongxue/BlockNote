@@ -47,6 +47,10 @@ export interface MediaCardSlotContext {
 export interface MediaCardRuntime {
   /** Opt-in only: retain stored captions/alt text without exposing visible captions. */
   captionsEnabled?: boolean;
+  pickFile?: (
+    blockId: string,
+    kind: MediaCardKind,
+  ) => Promise<{ url: string; name: string } | null>;
   renderImagePreview?: (src: string, onClose: () => void) => ReactNode;
   renderMediaToolbar?: (context: MediaCardSlotContext) => ReactNode;
   renderMediaPanel?: (context: MediaCardSlotContext) => ReactNode;
@@ -265,7 +269,35 @@ function MediaCard({
     busy: Boolean(busy),
     uploading,
     update,
-    upload: () => fileInput?.click(),
+    upload: () => {
+      if (!runtime?.pickFile) {
+        fileInput?.click();
+        return;
+      }
+      if (uploading || !editable) {
+        return;
+      }
+      setUploading(true);
+      void runtime
+        .pickFile(block.id, block.type)
+        .then((result) => {
+          const current = editor.getBlock(block.id);
+          if (
+            !result ||
+            !current ||
+            current.type !== block.type ||
+            current.props.url !== props.url
+          ) {
+            return;
+          }
+          if (props.taskId) {
+            runtime.cancel(props.taskId);
+          }
+          update({ ...result, aiEnabled: false, taskId: "" });
+        })
+        .catch(() => runtime.notifyError?.("导入失败，请重试"))
+        .finally(() => setUploading(false));
+    },
     editCaption: () => {
       if (!runtime?.captionsEnabled) {
         return;

@@ -114,12 +114,13 @@ export function scrollToOutlineHeading(
   viewport: HTMLElement,
   heading: HTMLElement,
 ) {
+  // Clear the 48px page header with a small gap above the target heading.
   const top =
     heading.getBoundingClientRect().top -
     viewport.getBoundingClientRect().top -
     viewport.clientTop +
     viewport.scrollTop -
-    80;
+    56;
   viewport.scrollTo({
     top: Math.max(
       0,

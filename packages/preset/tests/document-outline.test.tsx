@@ -176,7 +176,7 @@ describe("document outline", () => {
     expect(prevent.defaultPrevented).toBe(true);
     last.click();
     expect(scrollTo).toHaveBeenCalledWith({
-      top: 1080,
+      top: 1104,
       behavior: "smooth",
     });
     expect(editor.getTextCursorPosition()).toEqual(cursor);
@@ -235,7 +235,7 @@ describe("document outline", () => {
       .querySelector<HTMLButtonElement>(".bn-preset-outline-item")!
       .click();
     expect(scrollTo).toHaveBeenLastCalledWith({
-      top: 80,
+      top: 104,
       behavior: "instant",
     });
   });

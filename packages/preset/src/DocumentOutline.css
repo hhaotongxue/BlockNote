@@ -9,6 +9,9 @@
 }
 
 .bn-preset-outline-rail {
+  /* Align collapsed ticks with the header's 24px inset without moving the panel. */
+  position: relative;
+  right: 8px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;

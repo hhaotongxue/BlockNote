@@ -13,6 +13,10 @@ import { taskCheckFeedback } from "./taskCheckFeedback.js";
 import { useCreationPolicy } from "./useCreationPolicy.js";
 
 import { installMediaDrag } from "./mediaDrag.js";
+import {
+  DocumentOutline,
+  type DocumentOutlineOptions,
+} from "./DocumentOutline.js";
 
 /** Shared visual preset. Consumers supply document, persistence and business UI only. */
 export function EditorView<
@@ -24,6 +28,7 @@ export function EditorView<
   onApplyMaterial,
   onDownloadFile,
   onClickCapture,
+  outline = false,
   selectionColor = "#38bdf8",
   sideMenu = true,
   className,
@@ -34,6 +39,8 @@ export function EditorView<
   selectionColor?: string;
   onApplyMaterial?: () => void;
   onDownloadFile?: (url: string, name?: string) => void;
+  /** Optional document navigation. Cards and other consumers stay unchanged. */
+  outline?: DocumentOutlineOptions | false;
 }) {
   const selectionStyle: CSSProperties & {
     "--bn-media-selection-color": string;
@@ -60,6 +67,9 @@ export function EditorView<
     function dismissMediaSelection(event: PointerEvent) {
       const target = event.target;
       if (!root || !(target instanceof Element)) {
+        return;
+      }
+      if (target.closest(".bn-preset-outline")) {
         return;
       }
       if (target.closest(".bn-media-card-panel")) {
@@ -113,6 +123,7 @@ export function EditorView<
       <BlockNoteFormattingToolbar onDownloadFile={onDownloadFile} />
       {props.tableHandles !== false && <BlockNoteTableHandles />}
       {children}
+      {outline && <DocumentOutline editor={props.editor} {...outline} />}
     </BlockNoteView>
   );
 }

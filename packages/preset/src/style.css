@@ -9,6 +9,7 @@
 @import "./CardEditorView.css";
 @import "./MediaCard.css";
 @import "./MaterialImportProgress.css";
+@import "./DocumentOutline.css";
 
 .bn-preset-bookmark {
   width: 100%;

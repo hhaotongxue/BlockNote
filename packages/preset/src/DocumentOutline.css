@@ -1,0 +1,125 @@
+/* Outline is an overlay: it never contributes to document measure or flow. */
+.bn-preset-outline {
+  position: absolute;
+  z-index: 20;
+  font-family: var(--bn-preset-font);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--bn-preset-text-secondary);
+}
+
+.bn-preset-outline-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  width: 24px;
+  max-height: var(--bn-outline-height);
+  padding: 4px 0 4px 8px;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.bn-preset-outline-tick {
+  display: block;
+  flex: 0 1 16px;
+  min-height: 3px;
+  position: relative;
+}
+
+.bn-preset-outline-tick::after {
+  content: "";
+  position: absolute;
+  inset: 6px 0 auto;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--bn-preset-text-tertiary);
+  opacity: 0.65;
+}
+
+.bn-preset-outline-tick[data-active="true"]::after {
+  background: var(--bn-preset-text-primary);
+  opacity: 1;
+}
+
+.bn-preset-outline-panel {
+  position: absolute;
+  top: 0;
+  right: -8px;
+  box-sizing: border-box;
+  width: var(--bn-outline-width);
+  max-height: var(--bn-outline-height);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bn-preset-border) transparent;
+  padding: 16px;
+  border: 1px solid var(--bn-preset-border);
+  border-radius: 16px;
+  background: var(--bn-preset-bg-card);
+  animation: bn-outline-reveal 120ms ease-out;
+}
+
+.bn-preset-outline-panel[hidden] {
+  display: none;
+}
+
+.bn-preset-outline[data-open="true"] .bn-preset-outline-rail {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bn-preset-outline-item {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 4px;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.bn-preset-outline-item span {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.bn-preset-outline-item:hover {
+  color: var(--bn-preset-text-primary);
+  background: var(--bn-preset-button-hover);
+}
+
+.bn-preset-outline-item[aria-current="location"] {
+  color: var(--color-primary, #38bdf8);
+}
+
+.bn-preset-outline button:focus-visible {
+  outline: 2px solid var(--color-primary, #38bdf8);
+  outline-offset: 2px;
+}
+
+@keyframes bn-outline-reveal {
+  from {
+    opacity: 0;
+    transform: translateX(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bn-preset-outline-panel {
+    animation: none;
+  }
+}

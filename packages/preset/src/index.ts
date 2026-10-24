@@ -1,4 +1,8 @@
 export { EditorView } from "./EditorView.js";
+export {
+  DocumentOutline,
+  type DocumentOutlineOptions,
+} from "./DocumentOutline.js";
 export { DocumentLinks } from "./DocumentLinks.js";
 export { BlockNoteCommandMenu } from "./BlockNoteCommandMenu.js";
 export { BlockNoteFormattingToolbar } from "./BlockNoteFormattingToolbar.js";

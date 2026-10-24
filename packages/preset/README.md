@@ -38,6 +38,16 @@ corepack pnpm@11.8.0 exec vp run --filter @blocknote/core --filter @blocknote/re
 
 菜单、工具栏和页面图标统一使用导出的 `EditorTooltip`。传 `label` 与一个可接收 ref 的子元素；页面外使用时可传 `colorScheme="light"` / `"dark"`。编辑器浮层内可通过 `portalProps.target` 指向 `usePortalElement()` 返回的主题容器。不要直接使用 Mantine Tooltip、原生 title 或 CSS 伪元素另画一层提示。背景、字体、留白统一由 Mantine 皮肤的 tooltip 规则维护。
 
+## 文档大纲 Outline
+
+完整文档页面可以向 `EditorView` 传 `outline={{ scrollContainer: viewport }}`，默认关闭，不影响卡片或其他消费项目。`viewport` 是只负责文档的滚动容器；默认将浮层挂载到它的父元素，也可以通过 `container` 指定。浮层宿主需要 `position: relative`，并继承 preset 主题变量（完整页面使用既有的 `bn-preset-page`）。导航组件也单独导出为 `DocumentOutline`。
+
+大纲采用右侧短横线、悬停展开的布局，颜色、13px 字号和字体沿用文档控件主题。支持标题层级、当前章节、点击跳转、键盘访问和 Escape 收起。浮层不占正文宽度，不添加正文块或修改 schema，不调用选区/编辑命令，也不写入保存数据与撤销历史。只在指定的文档容器内滚动，尊重减少动态效果设置。没有非空标题时隐藏。
+
+组件通过公开的 `editor.document` / `editor.onChange` 读取标题，切换 editor 时更换订阅，卸载时清理滚动监听、ResizeObserver 和待执行的帧回调。
+
+专项与现有 preset 回归：`pnpm exec vp test --config packages/preset/tests/vite.config.ts --run`。
+
 ## 卡片视图
 
 `CardEditorView` 接收 `editor`、`theme`、`mode: "readonly" | "editable"` 和可选 `maxHeight`（默认 320px）和 `scrollable`（默认 true）。卡片始终只有正文，不含标题、保存、Git 或业务动作。只读模式关闭编辑及菜单；可编辑模式复用精简编辑 UI。宿主负责创建独立 editor view 并绑定共享文档、加载/卸载及可选历史追踪。完整页面继续使用 `EditorView`。

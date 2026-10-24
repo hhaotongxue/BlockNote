@@ -16,6 +16,7 @@ export default defineConfig({
       "packages/preset/tests/document-content.test.ts",
       "packages/preset/tests/media-card.test.tsx",
       "packages/preset/tests/media-layout.test.tsx",
+      "packages/preset/tests/document-outline.test.tsx",
     ],
   },
 });

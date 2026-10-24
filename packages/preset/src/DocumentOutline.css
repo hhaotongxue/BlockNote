@@ -14,7 +14,8 @@
   align-items: flex-end;
   gap: 0;
   width: 24px;
-  max-height: var(--bn-outline-height);
+  /* Show at most 30 fixed-spaced ticks; shorter viewports clip sooner. */
+  max-height: min(480px, calc(var(--bn-outline-height) - 8px));
   padding: 4px 0 4px 8px;
   overflow: hidden;
   border: 0;
@@ -24,8 +25,7 @@
 
 .bn-preset-outline-tick {
   display: block;
-  flex: 0 1 16px;
-  min-height: 3px;
+  flex: 0 0 16px;
   position: relative;
 }
 
@@ -50,7 +50,8 @@
   right: -8px;
   box-sizing: border-box;
   width: var(--bn-outline-width);
-  max-height: var(--bn-outline-height);
+  /* Leave extra space below the panel for floating corner controls. */
+  max-height: max(48px, calc(var(--bn-outline-height) - 64px));
   overflow: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;

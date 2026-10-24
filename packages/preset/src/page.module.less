@@ -128,6 +128,13 @@
 
 /* Scrollable Canvas Area */
 .canvasArea {
+  /* Document and appended sections share a measure without sharing minimum height. */
+  --affine-editor-width: min(
+    var(--bn-document-max-width, 760px),
+    calc(100% - 48px)
+  );
+  --affine-editor-side-padding: 24px;
+  --bn-editor-side-padding: 24px;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -199,12 +206,6 @@
   margin: 0 auto;
   padding: 102px 0 20px;
   overflow: visible;
-  --affine-editor-width: min(
-    var(--bn-document-max-width, 760px),
-    calc(100% - 48px)
-  );
-  --affine-editor-side-padding: 24px;
-  --bn-editor-side-padding: 24px;
 
   &.hasCover {
     padding-top: 0;
